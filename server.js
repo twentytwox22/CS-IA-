@@ -1,4 +1,7 @@
 const express = require("express");
+
+const expressLayouts = require('express-ejs-layouts');
+
 const { pool } = require("./dbConfig");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
@@ -23,7 +26,14 @@ app.use(session({
 app.use(passport.session());
 app.use(passport.initialize());
 app.use(express.urlencoded({ extended: false }));
-app.set('view engine', 'ejs')
+
+
+app.use(expressLayouts);
+app.set('view engine', 'ejs');
+app.set('views', __dirname + 'views');
+app.set('layout', 'layouts/layout');
+app.use(express.static('public'));
+
 app.use(flash());
 
 app.use('/students',studentRoutes);

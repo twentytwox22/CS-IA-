@@ -1,49 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"/>
- 
-    <title>Dashboard</title>
-    <style>
-        .button-container {
-            display: flex;
-        }
-        .button-container button {
-            margin-right: 10px; /* Adjust spacing between buttons */
-        }
-    </style>
-</head>
-    <body>
-        <a href="/students/logout">logout</a>
-        <h1> Hello <%= student_name %> </h1>
 
-        <ul>
-            <% if(messages.success_msg) { %>
-            <li><%= messages.success_msg %></li>
-            <% } %>
-          </ul>
 
-        <!-- Button container to arrange buttons horizontally -->
-    <div class="button-container">
-        <!-- Button to add a new car leads to another page -->
-        <form action="/students/add-car" method="POST">
-            <input type="text" name="car_plate" placeholder="Car Plate">
-            <input type="text" name="make" placeholder="Make">
-            <input type="text" name="model" placeholder="Model">
-            <input type="text" name="colour" placeholder="Colour">
-            <button type="submit">Add Car</button>
-        </form>
-        
-        <!-- Button to change car details leads to another page -->
-        <form action="/students/change-car-details" method="POST">
-            <button type="submit">Change Car Details</button>
-        </form>
 
-        <!-- Button to remove car will automatically remove car and say "make + model successfully removed"--> 
-        <form action="/students/remove-car" method="POST">
-            <button type="submit">Remove Car</button>
-        </form>
-</body>
-</html>
+<div class="container">
+
+    <a href="/students/logout">logout</a>
+    <h1> Hello <%= student_name %> </h1>
+
+    <ul>
+        <% if(messages.success_msg) { %>
+        <li><%= messages.success_msg %></li>
+        <% } %>
+      </ul>
+
+    <!-- Button container to arrange buttons horizontally -->
+<div class="button-container">
+    <!-- Button to add a new car leads to another page -->
+    <form action="/students/add-car" method="POST">
+        <input type="text" name="car_plate" placeholder="Car Plate">
+        <input type="text" name="make" placeholder="Make">
+        <input type="text" name="model" placeholder="Model">
+        <input type="text" name="colour" placeholder="Colour">
+        <button type="submit">Add Car</button>
+    </form>
+    
+    <!-- Button to change car details leads to another page -->
+    <form action="/students/change-car-details" method="POST">
+        <button type="submit">Change Car Details</button>
+    </form>
+
+    <!-- Button to remove car will automatically remove car and say "make + model successfully removed"--> 
+    <form action="/students/remove-car" method="POST">
+        <button type="submit">Remove Car</button>
+    </form>
+</div>

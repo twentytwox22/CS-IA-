@@ -25,7 +25,8 @@ router.get('/login', checkAuthenticated, (req,res)=>{
 });
 router.get('/dashboard', checkNotAuthenticated, (req,res)=>{
     const student_name = req.user.student_name;
-    res.render("dashboard", { student_name});
+    //res.render("dashboard", { student_name});
+    res.render('dashboard', { title: 'Dashboard', student_name});
 });
 
 
