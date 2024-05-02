@@ -10,6 +10,8 @@ const session = require("express-session");
 require("dotenv").config();
 const initializePassport = require("../../passportConfig");
 const { pool } = require("../../dbConfig");
+const { addStudentID } = require('./studentBallotManager');
+
 
 initializePassport(passport);
 
@@ -99,7 +101,8 @@ async function registerUser (req, res) {
                         req.flash('success_msg',"You are now registered. Please log in");
                         
                         res.redirect('/students/login');
-})}})}}
+})}})}
+}
 
 async function addCar(req, res) {
     const { car_plate, make, model, colour } = req.body;
@@ -119,8 +122,17 @@ async function addCar(req, res) {
             console.log("Car added:", result.rows);
             req.flash('success_msg', "Car successfully added");
             res.redirect("/students/dashboard");
-    }  
+}  
 
+async function enterBallot(req, res) {
+    const studentId = req.user.student_id; 
+
+    // Add student ID to the global list, checks for duplicates internally
+    addStudentID(studentId);
+
+    req.flash('success_msg', "You have successfully entered the ballot.");
+    res.redirect("/students/dashboard");
+}
     function checkAuthenticated(req, res, next) {
         if (req.isAuthenticated()) {
           return res.redirect("/students/dashboard");
@@ -139,4 +151,5 @@ module.exports = {
     registerUser,
     loginUser,
     addCar,
+    enterBallot,
 };

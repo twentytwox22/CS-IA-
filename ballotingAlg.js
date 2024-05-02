@@ -1,4 +1,7 @@
-function allocateParkingSpots(studentIDs, numberOfSpots) {
+const { getStudentIDs } = require('./studentBallotManager'); // Adjust the path as necessary
+let studentIDs = getStudentIDs();
+function allocateParkingSpots(numberOfSpots) {
+    
     let winners = new Set();
 
     // Ensure the number of spots does not exceed the number of students
@@ -12,9 +15,23 @@ function allocateParkingSpots(studentIDs, numberOfSpots) {
     return Array.from(winners);
 }
 
-// Example usage
-const studentIDs = ["S1001", "S1002", "S1003", "S1004", "S1005", "S1006"];
-const numberOfSpots = 3; // Total parking spots available
-const allocatedSpots = allocateParkingSpots(studentIDs, numberOfSpots);
+// This can be called via a route or a scheduled task
+function performAllocation() {
+    
+    const numberOfSpots = 3; // Total parking spots available
+    const allocatedSpots = allocateParkingSpots(numberOfSpots);
 
-console.log("Allocated Spots:", allocatedSpots);
+    console.log("Student ID:", studentIDs);
+    console.log("Number of Student IDs:", studentIDs.length);
+    console.log(numberOfSpots);
+    console.log("Allocated Spots:", allocatedSpots);
+
+    // Additional logic as needed (e.g., database updates, notifications)
+    return allocatedSpots;
+}
+
+console.log(performAllocation());
+
+
+
+module.exports = { performAllocation };

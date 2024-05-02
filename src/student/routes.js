@@ -37,6 +37,7 @@ router.post('/add-car', controller.addCar);
 router.get('/logout', controller.logoutUser);
 router.post('/register', controller.registerUser);
 router.post("/login",controller.loginUser);
+router.post('/enter-ballot', controller.enterBallot);
 
 
 
