@@ -1,3 +1,5 @@
+const { pool } = require("./dbConfig");
+
 let studentIDs = []; // This holds the student IDs
 
 // Function to add a student ID
@@ -10,7 +12,6 @@ function addStudentID(studentId) {
 
 // Function to get all student IDs
 function getStudentIDs() {
-    console.log('student array: ', studentIDs);
     return studentIDs;
 }
 

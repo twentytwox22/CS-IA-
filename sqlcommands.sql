@@ -1,6 +1,10 @@
 
 --\i C:\Users\LIMJR\Documents\OneDrive - cgs.act.edu.au\IB - Onedrive\CS\trying-out-myself\sqlcommands.sql
-
+CREATE TABLE ballot_entries (
+    student_id INT PRIMARY KEY,
+    entered_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students (student_id)
+);
 
 CREATE TABLE car ( 
 car_plate VARCHAR(30) NOT NULL PRIMARY KEY, --stores Car Plate eg ACT123, up to 30 characters, must be entered
