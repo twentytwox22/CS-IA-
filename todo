@@ -1,5 +1,5 @@
-add error hadnling for letting users add more than one car 
 add current car details
+add functionalities for change car details and delete car buttons 
 
 add ballot status ("already joined", "havent joined")
 add next ballot status ("next ballot in xx:xx:xx")
@@ -7,3 +7,6 @@ add next ballot status ("next ballot in xx:xx:xx")
 fix dashboard UI
 
 add error handling for trying to enter dashboard when not logged in 
+
+DONE: 
+add error handling for letting users add more than one car (3/5/24)

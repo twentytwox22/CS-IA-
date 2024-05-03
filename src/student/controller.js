@@ -107,22 +107,35 @@ async function registerUser (req, res) {
 async function addCar(req, res) {
     const { car_plate, make, model, colour } = req.body;
     let errors = [];
-    console.log({car_plate, make, model, colour});
+   
+    console.log("Received car details:", car_plate, make, model, colour);
+    console.log("Student ID from session:", req.user.student_id);
+
 
     try {
         // Check if the car already exists to prevent duplicate entries
+        const existingStudentCar = await pool.query(
+            `SELECT car_id FROM students WHERE student_id = $1 AND car_id IS NOT NULL`,
+            [req.user.student_id]
+        );
+
+        if (existingStudentCar.rows.length > 0) {
+            req.flash('error_msg', "You already have a car assigned. Only one car per student is allowed.");
+            return res.redirect("/students/dashboard");
+        }
+
+        // Check if the car plate already exists in the database
         const existingCarResult = await pool.query(
             `SELECT * FROM cars WHERE car_plate = $1`,
             [car_plate]
         );
 
         if (existingCarResult.rows.length > 0) {
-            // If car already exists, flash an error message and redirect
             req.flash('error_msg', `A car with plate number '${car_plate}' already exists.`);
             return res.redirect("/students/dashboard");
         }
 
-        // If car does not exist, proceed with the insertion
+        // If car does not exist, add the new car
         const result = await pool.query(
             `INSERT INTO cars (car_plate, make, model, colour) VALUES ($1, $2, $3, $4)`,
             [car_plate, make, model, colour]
@@ -140,8 +153,8 @@ async function addCar(req, res) {
         res.redirect("/students/dashboard");
 
     } catch (error) {
-        console.error("Error adding car:", error);
-        // Flash a generic error message in case of other errors
+        console.error("Error when trying to add car:", error);
+        console.log(error);  // Log the full error object to get more details
         req.flash('error_msg', 'Failed to add car due to an unexpected error.');
         res.redirect("/students/dashboard");
     }
