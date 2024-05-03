@@ -14,7 +14,7 @@
 
     <!-- Button container to arrange buttons horizontally -->
 <div class="button-container">
-    <!-- Button to add a new car leads to another page -->
+    <!-- Button to add a new car -->
     <form action="/students/add-car" method="POST">
         <input type="text" name="car_plate" placeholder="Car Plate">
         <input type="text" name="make" placeholder="Make">
@@ -23,10 +23,16 @@
         <button type="submit">Add Car</button>
     </form>
     
-    <!-- Button to change car details leads to another page -->
-    <form action="/students/change-car-details" method="POST">
-        <button type="submit">Change Car Details</button>
-    </form>
+    <!-- Button to change car details -->
+    
+<form action="/students/change-car-details" method="POST">
+     <input type="text" name="new_car_plate" placeholder="New Car Plate">
+    <input type="text" name="new_make" placeholder="New Make">
+    <input type="text" name="new_model" placeholder="New Model">
+    <input type="text" name="new_colour" placeholder="New Colour">
+    <button type="submit">Update Car Details</button>
+</form>
+
 
     <!-- Button to remove car will automatically remove car and say "make + model successfully removed"--> 
     <form action="/students/remove-car" method="POST">

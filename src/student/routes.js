@@ -32,6 +32,7 @@ router.get('/dashboard', checkNotAuthenticated, (req,res)=>{
 
 
 router.post('/add-car', controller.addCar);
+router.post('/change-car-details', controller.changeCarDetails);
 
 
 router.get('/logout', controller.logoutUser);

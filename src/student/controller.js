@@ -160,6 +160,63 @@ async function addCar(req, res) {
     }
 }  
 
+async function changeCarDetails(req, res) {
+    const { car_plate, new_car_plate, new_make, new_model, new_colour } = req.body;
+    const studentId = req.user.student_id;
+
+    try {
+        // Check if the car belongs to the logged-in student
+        const carCheck = await pool.query(
+            `SELECT * FROM cars WHERE car_plate = $1 AND car_plate = (SELECT car_id FROM students WHERE student_id = $2)`,
+            [car_plate, studentId]
+        );
+
+        if (carCheck.rows.length === 0) {
+            req.flash('error_msg', 'No car found with that plate registered to your account.');
+            return res.redirect('/students/dashboard');
+        }
+
+        // If changing the car plate, check for potential duplicate plates
+        if (new_car_plate && new_car_plate !== car_plate) {
+            const duplicateCheck = await pool.query(
+                `SELECT * FROM cars WHERE car_plate = $1`,
+                [new_car_plate]
+            );
+            if (duplicateCheck.rows.length > 0) {
+                req.flash('error_msg', 'Another car with the new plate already exists.');
+                return res.redirect('/students/dashboard');
+            }
+        }
+
+        // Update car details
+        const updateQuery = `
+            UPDATE cars
+            SET car_plate = COALESCE($2, car_plate),
+                make = COALESCE($3, make),
+                model = COALESCE($4, model),
+                colour = COALESCE($5, colour)
+            WHERE car_plate = $1;
+        `;
+        await pool.query(updateQuery, [car_plate, new_car_plate, new_make, new_model, new_colour]);
+
+        // Update the student's car_id if the plate was changed
+        if (new_car_plate && new_car_plate !== car_plate) {
+            await pool.query(
+                `UPDATE students SET car_id = $1 WHERE student_id = $2`,
+                [new_car_plate, studentId]
+            );
+        }
+
+        req.flash('success_msg', 'Car details updated successfully.');
+        res.redirect('/students/dashboard');
+    } catch (error) {
+        console.error('Failed to update car details:', error);
+        req.flash('error_msg', 'Failed to update car details due to an unexpected error.');
+        res.redirect('/students/dashboard');
+    }
+}
+
+
 async function enterBallot(req, res) {
     const studentId = req.user.student_id; 
 

@@ -5,6 +5,7 @@ add ballot status ("already joined", "havent joined")
 add next ballot status ("next ballot in xx:xx:xx")
 
 fix dashboard UI
+maybe remove add car button if there is a car already added vice
 
 add error handling for trying to enter dashboard when not logged in 
 
