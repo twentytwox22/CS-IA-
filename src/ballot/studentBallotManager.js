@@ -1,4 +1,4 @@
-const { pool } = require("./dbConfig");
+const { pool } = require("../../dbConfig");
 
 let studentIDs = []; // This holds the student IDs
 

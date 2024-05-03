@@ -1,4 +1,4 @@
-const { getStudentIDs } = require('./studentBallotManager'); // Adjust the path as necessary
+const { getStudentIDs } = require('./studentBallotManager'); 
 let studentIDs = getStudentIDs();
 
 function allocateParkingSpots(numberOfSpots) {
