@@ -10,7 +10,7 @@ const session = require("express-session");
 require("dotenv").config();
 const initializePassport = require("../../passportConfig");
 const { pool } = require("../../dbConfig");
-const { addStudentID } = require('./studentBallotManager');
+const { addStudentID} = require('../../studentBallotManager');
 
 
 initializePassport(passport);

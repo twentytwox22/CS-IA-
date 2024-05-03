@@ -1,5 +1,6 @@
 const { getStudentIDs } = require('./studentBallotManager'); // Adjust the path as necessary
 let studentIDs = getStudentIDs();
+
 function allocateParkingSpots(numberOfSpots) {
     
     let winners = new Set();

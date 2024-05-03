@@ -10,6 +10,7 @@ function addStudentID(studentId) {
 
 // Function to get all student IDs
 function getStudentIDs() {
+    console.log('student array: ', studentIDs);
     return studentIDs;
 }
 
