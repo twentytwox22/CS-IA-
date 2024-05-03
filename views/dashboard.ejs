@@ -1,13 +1,16 @@
 <div class="container">
 
-    <a href="/students/logout">logout</a>
     <h1> Hello <%= student_name %> </h1>
 
+    <!-- Message display area -->
     <ul>
-        <% if(messages.success_msg) { %>
-        <li><%= messages.success_msg %></li>
+        <% if (messages.success_msg) { %>
+            <li class="success-message"><%= messages.success_msg %></li>
         <% } %>
-      </ul>
+        <% if (messages.error_msg) { %>
+            <li class="error-message"><%= messages.error_msg %></li>
+        <% } %>
+    </ul>
 
     <!-- Button container to arrange buttons horizontally -->
 <div class="button-container">

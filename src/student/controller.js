@@ -109,19 +109,42 @@ async function addCar(req, res) {
     let errors = [];
     console.log({car_plate, make, model, colour});
 
-            const result = await pool.query(
-                `INSERT INTO cars (car_plate, make, model, colour) VALUES ($1, $2, $3, $4)`,
-                [car_plate, make, model, colour]
-            );
+    try {
+        // Check if the car already exists to prevent duplicate entries
+        const existingCarResult = await pool.query(
+            `SELECT * FROM cars WHERE car_plate = $1`,
+            [car_plate]
+        );
 
-            pool.query(
-                `UPDATE students SET car_id = $1 WHERE student_id = $2`,
-                [car_plate, req.user.student_id]   );
+        if (existingCarResult.rows.length > 0) {
+            // If car already exists, flash an error message and redirect
+            req.flash('error_msg', `A car with plate number '${car_plate}' already exists.`);
+            return res.redirect("/students/dashboard");
+        }
 
-            // Car successfully added
-            console.log("Car added:", result.rows);
-            req.flash('success_msg', "Car successfully added");
-            res.redirect("/students/dashboard");
+        // If car does not exist, proceed with the insertion
+        const result = await pool.query(
+            `INSERT INTO cars (car_plate, make, model, colour) VALUES ($1, $2, $3, $4)`,
+            [car_plate, make, model, colour]
+        );
+
+        // Update the student's car_id after successfully adding the car
+        await pool.query(
+            `UPDATE students SET car_id = $1 WHERE student_id = $2`,
+            [car_plate, req.user.student_id]
+        );
+
+        // Log and flash success message
+        console.log("Car added:", result.rows);
+        req.flash('success_msg', "Car successfully added");
+        res.redirect("/students/dashboard");
+
+    } catch (error) {
+        console.error("Error adding car:", error);
+        // Flash a generic error message in case of other errors
+        req.flash('error_msg', 'Failed to add car due to an unexpected error.');
+        res.redirect("/students/dashboard");
+    }
 }  
 
 async function enterBallot(req, res) {
