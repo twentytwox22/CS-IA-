@@ -1,12 +1,12 @@
-const {Router} = require('express');
+// const {Router} = require('express');
 const controller = require('./controller');
 // const { getStudentByID } = require('./queries');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const flash = require("express-flash");
-const session = require("express-session");
+// const flash = require("express-flash");
+// const session = require("express-session");
 require("dotenv").config();
 const initializePassport = require("../../passportConfig");
 const { pool } = require("../../dbConfig");
@@ -216,6 +216,48 @@ async function changeCarDetails(req, res) {
     }
 }
 
+async function deleteCar(req, res) {
+    if (!req.user || !req.user.student_id) {
+        req.flash('error_msg', 'You must be logged in to perform this operation.');
+        return res.redirect('/students/login');
+    }
+
+    const studentId = req.user.student_id;
+
+    try {
+        // First, fetch the car_plate to ensure the student currently has a car assigned
+        const fetchCarQuery = `
+            SELECT car_id FROM students WHERE student_id = $1;
+        `;
+        const carResult = await pool.query(fetchCarQuery, [studentId]);
+        if (carResult.rows.length === 0 || carResult.rows[0].car_id === null) {
+            req.flash('error_msg', 'No car assigned to you to delete.');
+            return res.redirect('/students/dashboard');
+        }
+
+        const carPlate = carResult.rows[0].car_id;
+
+        // Delete the car entry from the cars table
+        const deleteCarQuery = `
+            DELETE FROM cars WHERE car_plate = $1;
+        `;
+        await pool.query(deleteCarQuery, [carPlate]);
+
+        // Update the student's record to remove the car_id
+        const updateStudentQuery = `
+            UPDATE students SET car_id = NULL WHERE student_id = $1;
+        `;
+        await pool.query(updateStudentQuery, [studentId]);
+
+        req.flash('success_msg', 'Car successfully deleted.');
+        res.redirect('/students/dashboard');
+    } catch (error) {
+        console.error('Failed to delete car:', error);
+        req.flash('error_msg', 'Failed to delete car due to an unexpected error.');
+        res.redirect('/students/dashboard');
+    }
+}
+
 
 async function enterBallot(req, res) {
     const studentId = req.user.student_id; 
@@ -226,23 +268,25 @@ async function enterBallot(req, res) {
     req.flash('success_msg', "You have successfully entered the ballot.");
     res.redirect("/students/dashboard");
 }
-    function checkAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) {
-          return res.redirect("/students/dashboard");
-        }
-        next();
-    }
-    function checkNotAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) {
-          return next();
-        }
-        res.redirect("/students/login");
-    }
+    // function checkAuthenticated(req, res, next) {
+    //     if (req.isAuthenticated()) {
+    //       return res.redirect("/students/dashboard");
+    //     }
+    //     next();
+    // }
+    // function checkNotAuthenticated(req, res, next) {
+    //     if (req.isAuthenticated()) {
+    //       return next();
+    //     }
+    //     res.redirect("/students/login");
+    // }
 
 module.exports = {
     logoutUser,
     registerUser,
     loginUser,
     addCar,
+    changeCarDetails,
+    deleteCar,
     enterBallot,
 };

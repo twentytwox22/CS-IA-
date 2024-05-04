@@ -39,7 +39,7 @@ router.get('/logout', controller.logoutUser);
 router.post('/register', controller.registerUser);
 router.post("/login",controller.loginUser);
 router.post('/enter-ballot', controller.enterBallot);
-
+router.post('/delete-car', checkAuthenticated, controller.deleteCar);
 
 
 function checkAuthenticated(req, res, next) {

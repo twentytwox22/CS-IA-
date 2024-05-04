@@ -35,9 +35,11 @@
 
 
     <!-- Button to remove car will automatically remove car and say "make + model successfully removed"--> 
-    <form action="/students/remove-car" method="POST">
-        <button type="submit">Remove Car</button>
+    <!-- Add this inside your dashboard.ejs or car-details.ejs after ensuring the user has a car -->
+    <form action="/students/delete-car" method="POST" onsubmit="return confirm('Are you sure you want to delete your car?');">
+        <button type="submit">Delete Car</button>
     </form>
+
 
     <!-- button to join ballot -->
     <form action="/students/enter-ballot" method="POST">
