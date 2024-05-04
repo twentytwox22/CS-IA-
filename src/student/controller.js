@@ -260,14 +260,35 @@ async function deleteCar(req, res) {
 
 
 async function enterBallot(req, res) {
-    const studentId = req.user.student_id; 
+    if (!req.user || !req.user.student_id) {
+        req.flash('error_msg', 'You must be logged in to enter the ballot.');
+        return res.redirect('/students/login');
+    }
 
-    // Add student ID to the global list, checks for duplicates internally
-    addStudentID(studentId);
+    const studentId = req.user.student_id;
 
-    req.flash('success_msg', "You have successfully entered the ballot.");
-    res.redirect("/students/dashboard");
+    try {
+        // Check if the student has a car assigned
+        const carCheckQuery = `SELECT car_id FROM students WHERE student_id = $1 AND car_id IS NOT NULL`;
+        const carCheckResult = await pool.query(carCheckQuery, [studentId]);
+
+        if (carCheckResult.rows.length === 0) {
+            req.flash('error_msg', 'You do not have a car assigned and cannot enter the ballot.');
+            return res.redirect('/students/dashboard');
+        }
+
+        // Proceed with entering the ballot
+        addStudentID(studentId); // Assuming addStudentID handles logic to prevent duplicates
+        req.flash('success_msg', "You have successfully entered the ballot.");
+        res.redirect("/students/dashboard");
+
+    } catch (error) {
+        console.error("Error when trying to enter ballot:", error);
+        req.flash('error_msg', 'Failed to enter the ballot due to an unexpected error.');
+        res.redirect("/students/dashboard");
+    }
 }
+
     // function checkAuthenticated(req, res, next) {
     //     if (req.isAuthenticated()) {
     //       return res.redirect("/students/dashboard");

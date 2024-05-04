@@ -12,3 +12,4 @@ add error handling for trying to enter dashboard when not logged in
 DONE: 
 add error handling for letting users add more than one car (3/5/24)
 add current car details (4/5/24)
+added additional error handling for "enterballot" function: check if the student has an existing car before allowing them to enter (4/5/24)
