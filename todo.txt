@@ -1,0 +1,36 @@
+have a place to show me all the student details 
+FIX ADD CAR PROBLEM
+tidy up sql statements + FK PK thingo 
+understand why for select car by plate where there is one where Car id is not null (see controller.js 134 vs 225) 
+    one more instance at line 241
+check is car id in ballot system is the same 
+fix bugs arising from the prefilled form 
+add current car details
+add functionalities for change car details and delete car buttons 
+
+add ballot status ("already joined", "havent joined")
+add next ballot status ("next ballot in xx:xx:xx")
+
+fix dashboard UI
+maybe remove add car button if there is a car already added vice versa 
+
+Questions:
+Why dont the console.log statements show up in my terminal?
+what does returning do? (see querires.js line 8)
+What is try-catch? and when should i use it?
+What is asnyc? 
+Why two parts in error handling? 
+    (see controlller.js line 57... there is error handing in pool.query) 
+    -- should i use await function? (see controller line 121)
+when should i use console.log err and when should I use throw err? (see controller line 85 & 95)
+
+In process:
+Tidying up Controller.js -- shifting SQL logic to querires.js -- inline comments 
+
+DONE: 
+add error handling for letting users add more than one car (3/5/24)
+add current car details (4/5/24)
+added additional error handling for "enterballot" function: check if the student has an existing car before allowing them to enter (4/5/24)
+tidied up routes.js file (5/5/24)
+Enhanced Error Handling (checks if student year is 11 or 12, checks if student ID is only numbers) (5/5/24)
+Fixed bug where form isnt pre filled when error occurs (5/5/24)

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");  // Used for hashing passwords
 const passport = require("passport");  // Used for handling authentication
 const { pool } = require("../../dbConfig");  // Database pool for PostgreSQL
 const { addStudentID } = require('../ballot/studentBallotManager');  // Function to add student ID to the ballot
+const queries = require('./queries');  // Import SQL queries from queries.js
 
 // Function to log out the user
 function logoutUser(req, res) {
@@ -40,10 +41,12 @@ async function loginUser(req, res, next){
     }
 };
 
+// Function to register user
 async function registerUser (req, res) {
     let { student_name,student_ID, student_year, student_house, password, password2 } = req.body;
     let errors = [];
 
+    // Log user registration details
     console.log("Registering user: ", { 
         student_name,
         student_ID,
@@ -53,7 +56,7 @@ async function registerUser (req, res) {
         password2 
       }, "in controller.js");
 
-    //error checking
+    //error handling
     if (!student_name || !student_ID || !password || !password2) {
         errors.push({ message: "Please enter all fields" });
       }
@@ -69,41 +72,35 @@ async function registerUser (req, res) {
     if (student_year !== "11" && student_year !== "12") {
         errors.push({ message: "Please enter a valid year" });
     }
+    // If there are any errors, render the register page with error messages
     if (errors.length > 0) {
         res.render("register", { errors, student_name, student_ID, student_year, student_house}); 
-        //pre-fills the form fields with error msg
+        // This pre-fills the form fields with error messages
         return;
-      } else { // if everything is filled out properly
+      } else { // If everything is filled out properly
         //hash the password
         hashedPassword = await bcrypt.hash(password, 10); 
-        console.log(hashedPassword);
+        console.log("hashed pw is: " + hashedPassword + "from controller.js");
     
-        pool.query(
-            `SELECT * FROM students
-            WHERE student_id = $1`,
-            [student_ID],
-            (err, results) => {
-            if (err) {
-                console.error("Error executing SQL query:", err);
-            }
-            console.log(results.rows); 
-
-            if(results.rows.length > 0){
+        pool.query( 
+             //check if a student with the given student_ID already exists in the database.
+            queries.SELECT_STUDENT_BY_ID, [student_ID], (err, results) => { 
+                if (err) console.error("Error executing SQL query:", err);
+            console.log("existing students: " + results.rows); // Log existing students
+           
+            if(results.rows.length > 0){ // If student ID already exists
                     errors.push({message:'student id already in use'})
-                    res.render('register', {errors});
-                } else {//if successful
+                    res.render('register', { errors, student_name, student_ID, student_year, student_house});
+                } else { // If new student ID
+                    // Insert new student into the database
                     pool.query(
-                        `INSERT INTO students (student_name,student_id, student_year, student_house, password)
-                        VALUES ($1,$2,$3,$4,$5)
-                        RETURNING student_id, password`, 
+                        queries.INSERT_NEW_STUDENT, 
                         [student_name,student_ID, student_year, student_house, hashedPassword], (err,results)=>{
-                            if (err){
-                                throw err
-                            }
-                            console.log(results.rows); 
+                            if (err) throw err
+                        
+                            console.log("inserted new student: " + results.rows); // Log inserted new student
                             req.flash('success_msg',"You are now registered. Please log in");
-                            
-                            res.redirect('/students/login');
+                            res.redirect('/students/login'); // Redirect to login page after successful registration
                         }
                     )
                 }
@@ -112,6 +109,7 @@ async function registerUser (req, res) {
     }
 }
 
+// Function to add car (WIP)
 async function addCar(req, res) {
     const { car_plate, make, model, colour } = req.body;
     let errors = [];
@@ -123,8 +121,7 @@ async function addCar(req, res) {
     try {
         // Check if the car already exists to prevent duplicate entries
         const existingStudentCar = await pool.query(
-            `SELECT car_id FROM students WHERE student_id = $1 AND car_id IS NOT NULL`,
-            [req.user.student_id]
+            queries.SELECT_STUDENT_CAR_ID, [req.user.student_id]
         );
 
         if (existingStudentCar.rows.length > 0) {
@@ -134,7 +131,7 @@ async function addCar(req, res) {
 
         // Check if the car plate already exists in the database
         const existingCarResult = await pool.query(
-            `SELECT * FROM cars WHERE car_plate = $1`,
+            queries.SELECT_CAR_BY_PLATE,
             [car_plate]
         );
 
@@ -145,14 +142,12 @@ async function addCar(req, res) {
 
         // If car does not exist, add the new car
         const result = await pool.query(
-            `INSERT INTO cars (car_plate, make, model, colour) VALUES ($1, $2, $3, $4)`,
-            [car_plate, make, model, colour]
+            queries.INSERT_NEW_CAR, [car_plate, make, model, colour]
         );
 
         // Update the student's car_id after successfully adding the car
         await pool.query(
-            `UPDATE students SET car_id = $1 WHERE student_id = $2`,
-            [car_plate, req.user.student_id]
+            queries.UPDATE_STUDENT_CAR_ID, [car_plate, req.user.student_id]
         );
 
         // Log and flash success message
@@ -175,8 +170,7 @@ async function changeCarDetails(req, res) {
     try {
         // Check if the car belongs to the logged-in student
         const carCheck = await pool.query(
-            `SELECT * FROM cars WHERE car_plate = $1 AND car_plate = (SELECT car_id FROM students WHERE student_id = $2)`,
-            [car_plate, studentId]
+            queries.SELECT_CAR_BY_STUDENT_ID_AND_PLATE, [car_plate, studentId]
         );
 
         if (carCheck.rows.length === 0) {
@@ -187,7 +181,7 @@ async function changeCarDetails(req, res) {
         // If changing the car plate, check for potential duplicate plates
         if (new_car_plate && new_car_plate !== car_plate) {
             const duplicateCheck = await pool.query(
-                `SELECT * FROM cars WHERE car_plate = $1`,
+                queries.SELECT_CAR_BY_PLATE,
                 [new_car_plate]
             );
             if (duplicateCheck.rows.length > 0) {
@@ -197,20 +191,13 @@ async function changeCarDetails(req, res) {
         }
 
         // Update car details
-        const updateQuery = `
-            UPDATE cars
-            SET car_plate = COALESCE($2, car_plate),
-                make = COALESCE($3, make),
-                model = COALESCE($4, model),
-                colour = COALESCE($5, colour)
-            WHERE car_plate = $1;
-        `;
+        const updateQuery = queries.UPDATE_CAR;
         await pool.query(updateQuery, [car_plate, new_car_plate, new_make, new_model, new_colour]);
 
         // Update the student's car_id if the plate was changed
         if (new_car_plate && new_car_plate !== car_plate) {
             await pool.query(
-                `UPDATE students SET car_id = $1 WHERE student_id = $2`,
+                queries.UPDATE_STUDENT_CAR_ID,
                 [new_car_plate, studentId]
             );
         }
@@ -236,7 +223,7 @@ async function deleteCar(req, res) {
         // First, fetch the car_plate to ensure the student currently has a car assigned
         const fetchCarQuery = `
             SELECT car_id FROM students WHERE student_id = $1;
-        `;
+        `; // how is this different from the not null condition? 
         const carResult = await pool.query(fetchCarQuery, [studentId]);
         if (carResult.rows.length === 0 || carResult.rows[0].car_id === null) {
             req.flash('error_msg', 'No car assigned to you to delete.');
@@ -246,9 +233,7 @@ async function deleteCar(req, res) {
         const carPlate = carResult.rows[0].car_id;
 
         // Delete the car entry from the cars table
-        const deleteCarQuery = `
-            DELETE FROM cars WHERE car_plate = $1;
-        `;
+        const deleteCarQuery = queries.DELETE_CAR_BY_PLATE;
         await pool.query(deleteCarQuery, [carPlate]);
 
         // Update the student's record to remove the car_id
@@ -277,7 +262,7 @@ async function enterBallot(req, res) {
 
     try {
         // Check if the student has a car assigned
-        const carCheckQuery = `SELECT car_id FROM students WHERE student_id = $1 AND car_id IS NOT NULL`;
+        const carCheckQuery = queries.SELECT_STUDENT_BY_ID;
         const carCheckResult = await pool.query(carCheckQuery, [studentId]);
 
         if (carCheckResult.rows.length === 0) {
