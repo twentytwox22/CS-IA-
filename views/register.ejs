@@ -1,5 +1,5 @@
 <div class="container">
-     <h1> register </h1>
+     <h1> Register </h1>
 
      <ul> 
         <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
@@ -14,6 +14,7 @@
             id="student_name" 
             name="student_name" 
             placeholder="Student Name" 
+            value="<%= student_name %>"
             required/>
         </div>
         <div>
@@ -22,6 +23,7 @@
             id="student_ID" 
             name="student_ID" 
             placeholder="Student ID" 
+            value="<%= student_ID %>"
             required/>
         </div>
         <div>
@@ -30,6 +32,7 @@
             id="student_year" 
             name="student_year" 
             placeholder="Student year (11/12)" 
+            value="<%= student_year %>" 
             required/>
         </div>
         <div>
@@ -38,6 +41,7 @@
             id="student_house" 
             name="student_house" 
             placeholder="Student House" 
+            value="<%= student_house %>"
             required/>
         </div>
         <div>
