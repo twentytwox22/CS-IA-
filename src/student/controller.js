@@ -70,9 +70,7 @@ async function registerUser (req, res) {
     if (password !== password2) {
         errors.push({ message: "Passwords do not match" });
       }
-    if (student_year !== "11" && student_year !== "12") {
-        errors.push({ message: "Please enter a valid year" });
-    }
+    
     // If there are any errors, render the register page with error messages
     if (errors.length > 0) {
         res.render("register", { errors, student_name, student_ID, student_year, student_house}); 
@@ -164,124 +162,8 @@ async function addCar(req, res) {
     }
 }  
 
-async function changeCarDetails(req, res) {
-    const { car_plate, new_car_plate, new_make, new_model, new_colour } = req.body;
-    const studentId = req.user.student_id;
-
-    try {
-        // Check if the car belongs to the logged-in student
-        const carCheck = await pool.query(
-            queries.SELECT_CAR_BY_STUDENT_ID_AND_PLATE, [car_plate, studentId]
-        );
-
-        if (carCheck.rows.length === 0) {
-            req.flash('error_msg', 'No car found with that plate registered to your account.');
-            return res.redirect('/students/dashboard');
-        }
-
-        // If changing the car plate, check for potential duplicate plates
-        if (new_car_plate && new_car_plate !== car_plate) {
-            const duplicateCheck = await pool.query(
-                queries.SELECT_CAR_BY_PLATE,
-                [new_car_plate]
-            );
-            if (duplicateCheck.rows.length > 0) {
-                req.flash('error_msg', 'Another car with the new plate already exists.');
-                return res.redirect('/students/dashboard');
-            }
-        }
-
-        // Update car details
-        const updateQuery = queries.UPDATE_CAR;
-        await pool.query(updateQuery, [car_plate, new_car_plate, new_make, new_model, new_colour]);
-
-        // Update the student's car_id if the plate was changed
-        if (new_car_plate && new_car_plate !== car_plate) {
-            await pool.query(
-                queries.UPDATE_STUDENT_CAR_ID,
-                [new_car_plate, studentId]
-            );
-        }
-
-        req.flash('success_msg', 'Car details updated successfully.');
-        res.redirect('/students/dashboard');
-    } catch (error) {
-        console.error('Failed to update car details:', error);
-        req.flash('error_msg', 'Failed to update car details due to an unexpected error.');
-        res.redirect('/students/dashboard');
-    }
-}
-
-async function deleteCar(req, res) {
-    if (!req.user || !req.user.student_id) {
-        req.flash('error_msg', 'You must be logged in to perform this operation.');
-        return res.redirect('/students/login');
-    }
-
-    const studentId = req.user.student_id;
-
-    try {
-        // First, fetch the car_plate to ensure the student currently has a car assigned
-        const fetchCarQuery = `
-            SELECT car_id FROM students WHERE student_id = $1;
-        `; // how is this different from the not null condition? 
-        const carResult = await pool.query(fetchCarQuery, [studentId]);
-        if (carResult.rows.length === 0 || carResult.rows[0].car_id === null) {
-            req.flash('error_msg', 'No car assigned to you to delete.');
-            return res.redirect('/students/dashboard');
-        }
-
-        const carPlate = carResult.rows[0].car_id;
-
-        // Delete the car entry from the cars table
-        const deleteCarQuery = queries.DELETE_CAR_BY_PLATE;
-        await pool.query(deleteCarQuery, [carPlate]);
-
-        // Update the student's record to remove the car_id
-        const updateStudentQuery = `
-            UPDATE students SET car_id = NULL WHERE student_id = $1;
-        `;
-        await pool.query(updateStudentQuery, [studentId]);
-
-        req.flash('success_msg', 'Car successfully deleted.');
-        res.redirect('/students/dashboard');
-    } catch (error) {
-        console.error('Failed to delete car:', error);
-        req.flash('error_msg', 'Failed to delete car due to an unexpected error.');
-        res.redirect('/students/dashboard');
-    }
-}
 
 
-async function enterBallot(req, res) {
-    if (!req.user || !req.user.student_id) {
-        req.flash('error_msg', 'You must be logged in to enter the ballot.');
-        return res.redirect('/students/login');
-    }
-
-    const studentId = req.user.student_id;
-
-    try {
-        // Check if the student has a car assigned
-        const carCheckQuery = queries.SELECT_STUDENT_BY_ID;
-        const carCheckResult = await pool.query(carCheckQuery, [studentId]);
-
-        if (carCheckResult.rows.length === 0) {
-            req.flash('error_msg', 'You do not have a car assigned and cannot enter the ballot.');
-            return res.redirect('/students/dashboard');
-        }
-
-        // Proceed with entering the ballot
-        addStudentID(studentId); // Assuming addStudentID handles logic to prevent duplicates
-        req.flash('success_msg', "You have successfully entered the ballot.");
-        res.redirect("/students/dashboard");
-
-    } catch (error) {
-        console.error("Error when trying to enter ballot:", error);
-        req.flash('error_msg', 'Failed to enter the ballot due to an unexpected error.');
-        res.redirect("/students/dashboard");
-    }
-}
 
 
 module.exports = {
@@ -289,7 +171,4 @@ module.exports = {
     registerUser,
     loginUser,
     addCar,
-    changeCarDetails,
-    deleteCar,
-    enterBallot,
 };

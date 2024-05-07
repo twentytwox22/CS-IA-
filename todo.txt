@@ -17,10 +17,10 @@ fix dashboard UI
 maybe remove add car button if there is a car already added vice versa 
 
 Questions:
-how to get around bugs arising from the prefilled form 
 
 In process:
-Tidying up Controller.js -- shifting SQL logic to querires.js -- inline comments 
+added prefilled form functionality in register page  
+
 
 DONE: 
 add error handling for letting users add more than one car (3/5/24)

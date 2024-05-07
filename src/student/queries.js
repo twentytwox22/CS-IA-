@@ -27,7 +27,7 @@ const SELECT_CAR_BY_STUDENT_ID_AND_PLATE = `
     SELECT * 
     FROM cars 
     WHERE car_plate = $1 
-    AND car_plate = (SELECT car_id FROM students WHERE student_id = $2)
+    AND car_plate = (SELECT car_plate_fk FROM students WHERE student_id = $2)
 `; //what does this do actually
 const UPDATE_CAR = `
     UPDATE cars

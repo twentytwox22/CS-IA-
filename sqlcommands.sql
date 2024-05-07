@@ -1,10 +1,6 @@
 
---\i C:\Users\LIMJR\Documents\OneDrive - cgs.act.edu.au\IB - Onedrive\CS\trying-out-myself\sqlcommands.sql
-CREATE TABLE ballot_entries (
-    student_id INT PRIMARY KEY,
-    entered_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_id) REFERENCES students (student_id)
-);
+
+
 
 CREATE TABLE car ( 
 car_plate VARCHAR(30) NOT NULL PRIMARY KEY, --stores Car Plate eg ACT123, up to 30 characters, must be entered
@@ -20,9 +16,15 @@ CREATE TABLE students(
     student_house VARCHAR(20) NOT NULL, --stores Student house eg Hay as a number, must be entered
     password VARCHAR(200) NOT NULL, --stores Student password eg i<3elonmusk as a string, must be entered
     hasPermit BOOLEAN DEFAULT FALSE, --stores boolean value eg TRUE, set to false by default
-    car_id VARCHAR(30) REFERENCES car (car_plate), --stores student's carplate eg ACT123
-    UNIQUE(car_id), --one car to one student 
+    car_plate_fk VARCHAR(30) REFERENCES car (car_plate), --stores student's carplate eg ACT123
+    UNIQUE(car_plate_fk), --one car to one student 
     UNIQUE(student_id) --one studentid to one student 
+);
+
+CREATE TABLE ballot_entries (
+    student_id_fk INT PRIMARY KEY,
+    entered_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id_fk) REFERENCES students (student_id)
 );
 
 /*

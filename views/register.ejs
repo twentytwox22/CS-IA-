@@ -14,7 +14,7 @@
             id="student_name" 
             name="student_name" 
             placeholder="Student Name" 
-         
+            value="<%= typeof student_name !== 'undefined' ? student_name : '' %>"
             required/>
         </div>
         <div>
@@ -23,17 +23,15 @@
             id="student_ID" 
             name="student_ID" 
             placeholder="Student ID" 
-           
+            value="<%= typeof student_ID !== 'undefined' ? student_ID : '' %>"
             required/>
         </div>
         <div>
-            <input 
-            type="text" 
-            id="student_year" 
-            name="student_year" 
-            placeholder="Student year (11/12)" 
-           
-            required/>
+            <select id="student_year" name="student_year" required>
+                 <option value="" disabled <%= typeof student_year === 'undefined' || student_year === '' ? 'selected' : '' %>>Select year</option>
+                <option value="11" <%= student_year === "11" ? 'selected' : '' %>>11</option>
+                <option value="12" <%= student_year === "12" ? 'selected' : '' %>>12</option>
+            </select>
         </div>
         <div>
             <input 
@@ -41,7 +39,7 @@
             id="student_house" 
             name="student_house" 
             placeholder="Student House" 
-        
+            value="<%= typeof student_house !== 'undefined' ? student_house : '' %>"
             required/>
         </div>
         <div>
