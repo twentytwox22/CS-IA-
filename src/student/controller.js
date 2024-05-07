@@ -17,7 +17,6 @@ function logoutUser(req, res) {
             console.log("User logged out");
             res.redirect('/students/login'); // Redirect to login page
         });
-  
 }
 
 // Function to handle user login
@@ -38,24 +37,25 @@ function loginUser(req, res, next){
             failureRedirect: "/students/login",
             failureFlash: true
         })(req, res, next);
-        console.log("User logged in");
+        console.log(`User ${student_ID} logged in`);
     }
 };
 
 // Function to register user
 async function registerUser (req, res) {
+    
     let { student_name,student_ID, student_year, student_house, password, password2 } = req.body;
     let errors = [];
 
     // Log user registration details
-    console.log("Registering user: ", { 
+    console.log("Registering user:", { 
         student_name,
         student_ID,
         student_year,
         student_house,
         password,
         password2 
-      }, "in controller.js");
+      }, " in controller.js");
 
     //error handling
     if (!student_name || !student_ID || !password || !password2) {
@@ -79,7 +79,7 @@ async function registerUser (req, res) {
       } else { // If everything is filled out properly
         //hash the password
         hashedPassword = await bcrypt.hash(password, 10); 
-        console.log("hashed pw is: " + hashedPassword + "from controller.js");
+        console.log("hashed pw is: " + hashedPassword + " from controller.js");
     
         pool.query( 
              //check if a student with the given student_ID already exists in the database.
