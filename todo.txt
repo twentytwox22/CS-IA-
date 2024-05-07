@@ -15,14 +15,7 @@ fix dashboard UI
 maybe remove add car button if there is a car already added vice versa 
 
 Questions:
-Why dont the console.log statements show up in my terminal?
-what does returning do? (see querires.js line 8)
-What is try-catch? and when should i use it?
 What is asnyc? 
-Why two parts in error handling? 
-    (see controlller.js line 57... there is error handing in pool.query) 
-    -- should i use await function? (see controller line 121)
-when should i use console.log err and when should I use throw err? (see controller line 85 & 95)
 
 In process:
 Tidying up Controller.js -- shifting SQL logic to querires.js -- inline comments 

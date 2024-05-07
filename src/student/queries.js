@@ -6,7 +6,7 @@ const INSERT_NEW_STUDENT = `
     INSERT INTO students (student_name, student_id, student_year, student_house, password)
     VALUES ($1, $2, $3, $4, $5)
     RETURNING student_id, password; 
-`; //still dont undersstand what returning does 
+`; 
 const SELECT_STUDENT_CAR_ID = `
     SELECT car_id 
     FROM students 

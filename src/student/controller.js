@@ -38,6 +38,7 @@ async function loginUser(req, res, next){
             failureRedirect: "/students/login",
             failureFlash: true
         })(req, res, next);
+        console.log("User logged in");
     }
 };
 
@@ -98,7 +99,7 @@ async function registerUser (req, res) {
                         [student_name,student_ID, student_year, student_house, hashedPassword], (err,results)=>{
                             if (err) throw err
                         
-                            console.log("inserted new student: " + results.rows); // Log inserted new student
+                            console.log("inserted new student: " + student_name + " " + student_ID); // Log inserted new student
                             req.flash('success_msg',"You are now registered. Please log in");
                             res.redirect('/students/login'); // Redirect to login page after successful registration
                         }

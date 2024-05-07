@@ -47,10 +47,12 @@ router.post('/enter-ballot', checkAuthenticated, controller.enterBallot); // Ent
 
 //Authenticaton functions
 function checkAuthenticated(req, res, next) {
+    console.log("checking if authed...");
     if (req.isAuthenticated()) {
-      return res.redirect("/students/dashboard");
-    }
     console.log("user authed");
+      return res.redirect("/students/dashboard")
+    }
+    console.log("user not authed");
     next();
 }
 function checkNotAuthenticated(req, res, next) {
