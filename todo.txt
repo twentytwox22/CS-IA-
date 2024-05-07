@@ -1,9 +1,11 @@
 have a place to show me all the student details 
-FIX ADD CAR PROBLEM
+check car functions
+    FIX ADD CAR PROBLEM
+    check is car id in ballot system is the same 
 tidy up sql statements + FK PK thingo 
 understand why for select car by plate where there is one where Car id is not null (see controller.js 134 vs 225) 
     one more instance at line 241
-check is car id in ballot system is the same 
+
 fix bugs arising from the prefilled form 
 add current car details
 add functionalities for change car details and delete car buttons 
@@ -15,7 +17,7 @@ fix dashboard UI
 maybe remove add car button if there is a car already added vice versa 
 
 Questions:
-What is asnyc? 
+how to get around bugs arising from the prefilled form 
 
 In process:
 Tidying up Controller.js -- shifting SQL logic to querires.js -- inline comments 

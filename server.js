@@ -1,7 +1,5 @@
 const express = require("express");
-
 const expressLayouts = require('express-ejs-layouts');
-
 const { pool } = require("./dbConfig");
 const bcrypt = require("bcrypt");
 const passport = require("passport");

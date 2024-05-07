@@ -21,7 +21,7 @@ function logoutUser(req, res) {
 }
 
 // Function to handle user login
-async function loginUser(req, res, next){
+function loginUser(req, res, next){
     const { student_ID } = req.body;
     let errors = [];
 
