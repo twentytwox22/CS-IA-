@@ -24,8 +24,8 @@ added prefilled form functionality in register page
 
 DONE: 
 add error handling for letting users add more than one car (3/5/24)
-add current car details (4/5/24)
 added additional error handling for "enterballot" function: check if the student has an existing car before allowing them to enter (4/5/24)
 tidied up routes.js file (5/5/24)
 Enhanced Error Handling (checks if student year is 11 or 12, checks if student ID is only numbers) (5/5/24)
 Fixed bug where form isnt pre filled when error occurs (5/5/24)
+fixed up add car functionality (9/5/24)

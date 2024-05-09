@@ -2,7 +2,7 @@
 
 
 
-CREATE TABLE car ( 
+CREATE TABLE cars ( 
 car_plate VARCHAR(30) NOT NULL PRIMARY KEY, --stores Car Plate eg ACT123, up to 30 characters, must be entered
 make VARCHAR(30) NOT NULL, --stores Car make eg Telsa, up to 30 characters, must be entered
 colour VARCHAR(30) NOT NULL, --stores Car colour eg white, up to 30 characters, must be entered
@@ -16,7 +16,7 @@ CREATE TABLE students(
     student_house VARCHAR(20) NOT NULL, --stores Student house eg Hay as a number, must be entered
     password VARCHAR(200) NOT NULL, --stores Student password eg i<3elonmusk as a string, must be entered
     hasPermit BOOLEAN DEFAULT FALSE, --stores boolean value eg TRUE, set to false by default
-    car_plate_fk VARCHAR(30) REFERENCES car (car_plate), --stores student's carplate eg ACT123
+    car_plate_fk VARCHAR(30) REFERENCES cars (car_plate), --stores student's carplate eg ACT123
     UNIQUE(car_plate_fk), --one car to one student 
     UNIQUE(student_id) --one studentid to one student 
 );

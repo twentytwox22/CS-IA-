@@ -43,7 +43,6 @@ function loginUser(req, res, next){
 
 // Function to register user
 async function registerUser (req, res) {
-    
     let { student_name,student_ID, student_year, student_house, password, password2 } = req.body;
     let errors = [];
 
@@ -69,7 +68,7 @@ async function registerUser (req, res) {
     }
     if (password !== password2) {
         errors.push({ message: "Passwords do not match" });
-      }
+    }
     
     // If there are any errors, render the register page with error messages
     if (errors.length > 0) {
@@ -88,7 +87,7 @@ async function registerUser (req, res) {
             console.log("existing students: " + results.rows); // Log existing students
            
             if(results.rows.length > 0){ // If student ID already exists
-                    errors.push({message:'student id already in use'})
+                    errors.push({message:'Student ID already in use'})
                     res.render('register', { errors, student_name, student_ID, student_year, student_house});
                 } else { // If new student ID
                     // Insert new student into the database
@@ -96,7 +95,6 @@ async function registerUser (req, res) {
                         queries.INSERT_NEW_STUDENT, 
                         [student_name,student_ID, student_year, student_house, hashedPassword], (err,results)=>{
                             if (err) throw err
-                        
                             console.log("inserted new student: " + student_name + " " + student_ID); // Log inserted new student
                             req.flash('success_msg',"You are now registered. Please log in");
                             res.redirect('/students/login'); // Redirect to login page after successful registration
@@ -118,45 +116,33 @@ async function addCar(req, res) {
 
 
     try {
-        // Check if the car already exists to prevent duplicate entries
-        const existingStudentCar = await pool.query(
-            queries.SELECT_STUDENT_CAR_ID, [req.user.student_id]
-        );
+        // Check for existing car or car assigned to the student in a single query
+        const carCheckResult = await pool.query(queries.CHECK_CAR_PLATE_AND_STUDENT_ASSIGNMENT, 
+            [car_plate, req.user.student_id]);
 
-        if (existingStudentCar.rows.length > 0) {
-            req.flash('error_msg', "You already have a car assigned. Only one car per student is allowed.");
+        // Handle errors based on query results
+        if (carCheckResult.rows.length > 0) {
+            let errorMessage = carCheckResult.rows.find(row => row.car_plate === car_plate) ?
+                `A car with plate number '${car_plate}' already exists.` :
+                "You already have a car assigned. Only one car per student is allowed.";
+            req.flash('error_msg', errorMessage);
             return res.redirect("/students/dashboard");
         }
 
-        // Check if the car plate already exists in the database
-        const existingCarResult = await pool.query(
-            queries.SELECT_CAR_BY_PLATE,
-            [car_plate]
-        );
+        // If car does not exist, 
+        // Insert new car and update student record atomically using transaction
+        await pool.query('BEGIN');
+        await pool.query(queries.INSERT_NEW_CAR, [car_plate, make, model, colour]);
+        await pool.query(queries.UPDATE_STUDENT_CAR_ID, [car_plate, req.user.student_id]);
+        await pool.query('COMMIT');
 
-        if (existingCarResult.rows.length > 0) {
-            req.flash('error_msg', `A car with plate number '${car_plate}' already exists.`);
-            return res.redirect("/students/dashboard");
-        }
-
-        // If car does not exist, add the new car
-        const result = await pool.query(
-            queries.INSERT_NEW_CAR, [car_plate, make, model, colour]
-        );
-
-        // Update the student's car_id after successfully adding the car
-        await pool.query(
-            queries.UPDATE_STUDENT_CAR_ID, [car_plate, req.user.student_id]
-        );
-
-        // Log and flash success message
-        console.log("Car added:", result.rows);
+        // Flash success message and redirect to dashboard
         req.flash('success_msg', "Car successfully added");
         res.redirect("/students/dashboard");
 
     } catch (error) {
+        await pool.query('ROLLBACK');
         console.error("Error when trying to add car:", error);
-        console.log(error);  // Log the full error object to get more details
         req.flash('error_msg', 'Failed to add car due to an unexpected error.');
         res.redirect("/students/dashboard");
     }

@@ -40,7 +40,7 @@ router.post("/login", controller.loginUser); // Handles user login
 
 
 // Car related routes
-router.post('/add-car', checkAuthenticated, controller.addCar); // Adds a car, requires authentication
+router.post('/add-car', controller.addCar); // Adds a car, requires authentication
 // router.post('/change-car-details', checkAuthenticated, controller.changeCarDetails); // Changes car details, requires authentication
 // router.post('/delete-car', checkAuthenticated, controller.deleteCar); // Deletes a car, requires authentication
 // router.post('/enter-ballot', checkAuthenticated, controller.enterBallot); // Enter a ballot, requires authentication
