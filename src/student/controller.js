@@ -46,15 +46,7 @@ async function registerUser (req, res) {
     let { student_name,student_ID, student_year, student_house, password, password2 } = req.body;
     let errors = [];
 
-    // Log user registration details
-    console.log("Registering user:", { 
-        student_name,
-        student_ID,
-        student_year,
-        student_house,
-        password,
-        password2 
-      }, " in controller.js");
+
 
     //error handling
     if (!student_name || !student_ID || !password || !password2) {
@@ -103,6 +95,15 @@ async function registerUser (req, res) {
                 }
             }
         )
+            // Log user registration details
+    console.log("Registering user:", { 
+        student_name,
+        student_ID,
+        student_year,
+        student_house,
+        password,
+        password2 
+      }, " in controller.js");
     }
 }
 
@@ -121,12 +122,15 @@ async function addCar(req, res) {
             [car_plate, req.user.student_id]);
 
         // Handle errors based on query results
+        // Handle errors based on query results
         if (carCheckResult.rows.length > 0) {
-            let errorMessage = carCheckResult.rows.find(row => row.car_plate === car_plate) ?
-                `A car with plate number '${car_plate}' already exists.` :
-                "You already have a car assigned. Only one car per student is allowed.";
-            req.flash('error_msg', errorMessage);
-            return res.redirect("/students/dashboard");
+            // Determine the specific error message based on the reason returned
+            const reasons = carCheckResult.rows.map(row => row.reason);
+            let errorMessage = reasons.includes('car_exists') ?
+        `A car with plate number '${car_plate}' already exists.` :
+        "You already have a car assigned. Only one car per student is allowed.";
+        req.flash('error_msg', errorMessage);
+        return res.redirect("/students/dashboard");
         }
 
         // If car does not exist, 

@@ -21,10 +21,9 @@ const UPDATE_STUDENT_CAR_ID = `
     WHERE student_id = $2`;
 
 const CHECK_CAR_PLATE_AND_STUDENT_ASSIGNMENT = `
-    SELECT 1 FROM cars WHERE car_plate = $1
-    UNION
-    SELECT 1 FROM students WHERE student_id = $2 AND car_plate_fk IS NOT NULL
-`;
+    SELECT 'car_exists' AS reason FROM cars WHERE car_plate = $1
+    UNION ALL
+    SELECT 'car_assigned' AS reason FROM students WHERE student_id = $2 AND car_plate_fk IS NOT NULL`;
 
 
 

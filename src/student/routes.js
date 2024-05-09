@@ -40,7 +40,7 @@ router.post("/login", controller.loginUser); // Handles user login
 
 
 // Car related routes
-router.post('/add-car', controller.addCar); // Adds a car, requires authentication
+router.post('/add-car', ensureAuthenticated, controller.addCar); // Adds a car, requires authentication
 // router.post('/change-car-details', checkAuthenticated, controller.changeCarDetails); // Changes car details, requires authentication
 // router.post('/delete-car', checkAuthenticated, controller.deleteCar); // Deletes a car, requires authentication
 // router.post('/enter-ballot', checkAuthenticated, controller.enterBallot); // Enter a ballot, requires authentication
@@ -61,6 +61,14 @@ function checkNotAuthenticated(req, res, next) {
     }
     console.log("user not authed");
     res.redirect("/students/login");
+}
+function ensureAuthenticated(req, res, next) {
+    if (!req.isAuthenticated()) {
+        req.flash('error_msg', 'Please log in to view that resource');
+        res.redirect('/login');
+    } else {
+        next();
+    }
 }
 
 module.exports = router; 

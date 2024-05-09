@@ -19,8 +19,7 @@ maybe remove add car button if there is a car already added vice versa
 Questions:
 
 In process:
-added prefilled form functionality in register page  
-
+change car details 
 
 DONE: 
 add error handling for letting users add more than one car (3/5/24)
