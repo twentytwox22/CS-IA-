@@ -1,5 +1,5 @@
 car functions
-    delete car functionalities
+    
     check is car id in ballot system is the same 
 
 add ballot functionalities
@@ -22,3 +22,4 @@ Enhanced Error Handling (checks if student year is 11 or 12, checks if student I
 Fixed bug where form isnt pre filled when error occurs (5/5/24)
 fixed up add car functionality (9/5/24)
 added change car details functionality (10/5/24)
+delete car functionalities (10/5/24)
