@@ -170,14 +170,17 @@ async function updateCarDetails(req, res) {
 
         // check if there is a current car_plate associated with the user
         const currentCarResult = await pool.query(queries.SELECT_CAR_BY_STUDENT_ID, [req.user.student_id]);
-        if (currentCarResult.rows.length === 0) {
-            req.flash('error_msg', 'No car associated with this student.');
+        console.log(currentCarResult.rows);
+        if (currentCarResult.rows.length === 0 || currentCarResult.rows[0].car_plate_fk === null) {
+            req.flash('error_msg', 'You have not added a car. Update not possible.');
+            await pool.query('ROLLBACK');  // Roll back any potential changes made
             return res.redirect('/students/dashboard'); 
         }
         // Check if the new_car_plate is already in use by another car (not the current one)
         const plateCheckResult = await pool.query(queries.SELECT_CAR_BY_PLATE, [new_car_plate]);
         if (plateCheckResult.rows.length > 0 && plateCheckResult.rows[0].car_plate !== req.user.car_plate_fk) {
             req.flash('error_msg', `The car plate '${new_car_plate}' is already in use. Please choose a different plate number.`);
+            await pool.query('ROLLBACK');  // Roll back any potential changes
             return res.redirect('/students/dashboard');
         }
         
@@ -210,13 +213,14 @@ async function deleteCar(req, res) {
         await pool.query(`DELETE FROM cars WHERE car_plate = $1;`, [req.user.car_plate_fk]);
 
         await pool.query('COMMIT');
+        console.log(`Car with carplate ${req.user.car_plate_fk} deleted successfully`);
         req.flash('success_msg', 'Car successfully deleted');
-        res.redirect('/dashboard');
+        res.redirect('/students/dashboard');
     } catch (error) {
         await pool.query('ROLLBACK');
         console.error('Failed to delete car:', error);
         req.flash('error_msg', 'Failed to delete car due to an unexpected error.');
-        res.redirect('/dashboard');
+        res.redirect('/students/dashboard');
     }
 }
 
@@ -228,4 +232,5 @@ module.exports = {
     loginUser,
     addCar,
     updateCarDetails,
+    deleteCar,
 };
