@@ -1,25 +1,21 @@
-have a place to show me all the student details 
 check car functions
-    FIX ADD CAR PROBLEM
     check is car id in ballot system is the same 
-tidy up sql statements + FK PK thingo 
+    change car details and delete car functionalities
+
 understand why for select car by plate where there is one where Car id is not null (see controller.js 134 vs 225) 
     one more instance at line 241
 
-fix bugs arising from the prefilled form 
-add current car details
-add functionalities for change car details and delete car buttons 
-
-add ballot status ("already joined", "havent joined")
-add next ballot status ("next ballot in xx:xx:xx")
+add ballot functionalities
+    add ballot status ("already joined", "havent joined")
+    add next ballot status ("next ballot in xx:xx:xx")
 
 fix dashboard UI
-maybe remove add car button if there is a car already added vice versa 
+    have a place to show me all the student details 
+    maybe remove add car button if there is a car already added vice versa 
 
 Questions:
 
 In process:
-change car details 
 
 DONE: 
 add error handling for letting users add more than one car (3/5/24)
@@ -28,3 +24,4 @@ tidied up routes.js file (5/5/24)
 Enhanced Error Handling (checks if student year is 11 or 12, checks if student ID is only numbers) (5/5/24)
 Fixed bug where form isnt pre filled when error occurs (5/5/24)
 fixed up add car functionality (9/5/24)
+added change car details functionality (10/5/24)

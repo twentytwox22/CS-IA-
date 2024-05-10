@@ -107,10 +107,9 @@ async function registerUser (req, res) {
     }
 }
 
-// Function to add car (WIP)
+// Function to add car 
 async function addCar(req, res) {
     const { car_plate, make, model, colour } = req.body;
-    let errors = [];
    
     console.log("Received car details:", car_plate, make, model, colour);
     console.log("Student ID from session:", req.user.student_id);
@@ -137,7 +136,7 @@ async function addCar(req, res) {
         // Insert new car and update student record atomically using transaction
         await pool.query('BEGIN');
         await pool.query(queries.INSERT_NEW_CAR, [car_plate, make, model, colour]);
-        await pool.query(queries.UPDATE_STUDENT_CAR_ID, [car_plate, req.user.student_id]);
+        await pool.query(queries.UPDATE_STUDENT_CAR_FK, [car_plate, req.user.student_id]);
         await pool.query('COMMIT');
 
         // Flash success message and redirect to dashboard
@@ -153,6 +152,56 @@ async function addCar(req, res) {
 }  
 
 
+// Function to change car details
+async function updateCarDetails(req, res) {
+    const { new_car_plate, new_make, new_model, new_colour } = req.body;
+    
+    console.log("Received:", new_car_plate, new_make, new_model, new_colour, req.user.student_id, req.user.car_plate_fk);
+
+    //error handling
+    if (!new_car_plate || !new_make || !new_model || !new_colour) {
+        req.flash('error_msg', 'All fields must be filled out');
+        return res.redirect('/students/dashboard'); 
+    }
+
+    try {
+       
+        await pool.query('BEGIN');
+
+        // check if there is a current car_plate associated with the user
+        const currentCarResult = await pool.query(queries.SELECT_CAR_BY_STUDENT_ID, [req.user.student_id]);
+        if (currentCarResult.rows.length === 0) {
+            req.flash('error_msg', 'No car associated with this student.');
+            return res.redirect('/students/dashboard'); 
+        }
+        // Check if the new_car_plate is already in use by another car (not the current one)
+        const plateCheckResult = await pool.query(queries.SELECT_CAR_BY_PLATE, [new_car_plate]);
+        if (plateCheckResult.rows.length > 0 && plateCheckResult.rows[0].car_plate !== req.user.car_plate_fk) {
+            req.flash('error_msg', `The car plate '${new_car_plate}' is already in use. Please choose a different plate number.`);
+            return res.redirect('/students/dashboard');
+        }
+        
+
+        //update cars table
+        console.log("Updating car plate from",req.user.car_plate_fk, "to", new_car_plate);
+        await pool.query(queries.UPDATE_CAR, [new_car_plate, new_make, new_model, new_colour, req.user.car_plate_fk]);
+
+        // Update the students table -> car_plate_fk = new_car_plate
+        if (req.user.car_plate_fk !== new_car_plate) {
+            await pool.query(queries.UPDATE_STUDENT_CAR_FK, [new_car_plate, req.user.student_id]);
+        }
+
+        await pool.query('COMMIT');
+        req.flash('success_msg', 'Car details and references updated successfully');
+        res.redirect('/students/dashboard'); // Redirect to a suitable page
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error('Failed to update car details:', error);
+        req.flash('error_msg', 'Failed to update car details due to an unexpected error.');
+        res.redirect('/students/dashboard');
+    }
+}
+
 
 
 
@@ -161,4 +210,5 @@ module.exports = {
     registerUser,
     loginUser,
     addCar,
+    updateCarDetails,
 };

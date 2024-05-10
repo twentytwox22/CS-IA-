@@ -1,7 +1,3 @@
-
-
-
-
 CREATE TABLE cars ( 
 car_plate VARCHAR(30) NOT NULL PRIMARY KEY, --stores Car Plate eg ACT123, up to 30 characters, must be entered
 make VARCHAR(30) NOT NULL, --stores Car make eg Telsa, up to 30 characters, must be entered
@@ -16,19 +12,18 @@ CREATE TABLE students(
     student_house VARCHAR(20) NOT NULL, --stores Student house eg Hay as a number, must be entered
     password VARCHAR(200) NOT NULL, --stores Student password eg i<3elonmusk as a string, must be entered
     hasPermit BOOLEAN DEFAULT FALSE, --stores boolean value eg TRUE, set to false by default
-    car_plate_fk VARCHAR(30) REFERENCES cars (car_plate), --stores student's carplate eg ACT123
+     car_plate_fk VARCHAR(30),
+    FOREIGN KEY (car_plate_fk) REFERENCES cars (car_plate) ON UPDATE CASCADE, -- Cascading delete when a car record is deleted
     UNIQUE(car_plate_fk), --one car to one student 
     UNIQUE(student_id) --one studentid to one student 
 );
 
+-- not entered yet
 CREATE TABLE ballot_entries (
     student_id_fk INT PRIMARY KEY,
     entered_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id_fk) REFERENCES students (student_id)
 );
 
-/*
-Updating Foreign Key Columns
-UPDATE students SET car_plate = DC8422 WHERE student_id = 65563
-*/
+
 
