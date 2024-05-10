@@ -1,9 +1,6 @@
-check car functions
+car functions
+    delete car functionalities
     check is car id in ballot system is the same 
-    change car details and delete car functionalities
-
-understand why for select car by plate where there is one where Car id is not null (see controller.js 134 vs 225) 
-    one more instance at line 241
 
 add ballot functionalities
     add ballot status ("already joined", "havent joined")

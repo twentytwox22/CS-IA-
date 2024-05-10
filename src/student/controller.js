@@ -202,6 +202,23 @@ async function updateCarDetails(req, res) {
     }
 }
 
+async function deleteCar(req, res) {
+    try {
+        await pool.query('BEGIN');
+
+        // Delete the car from the cars table
+        await pool.query(`DELETE FROM cars WHERE car_plate = $1;`, [req.user.car_plate_fk]);
+
+        await pool.query('COMMIT');
+        req.flash('success_msg', 'Car successfully deleted');
+        res.redirect('/dashboard');
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error('Failed to delete car:', error);
+        req.flash('error_msg', 'Failed to delete car due to an unexpected error.');
+        res.redirect('/dashboard');
+    }
+}
 
 
 

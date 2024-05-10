@@ -13,7 +13,7 @@ CREATE TABLE students(
     password VARCHAR(200) NOT NULL, --stores Student password eg i<3elonmusk as a string, must be entered
     hasPermit BOOLEAN DEFAULT FALSE, --stores boolean value eg TRUE, set to false by default
      car_plate_fk VARCHAR(30),
-    FOREIGN KEY (car_plate_fk) REFERENCES cars (car_plate) ON UPDATE CASCADE, -- Cascading delete when a car record is deleted
+     FOREIGN KEY (car_plate_fk) REFERENCES cars(car_plate) ON UPDATE CASCADE ON DELETE SET NULL, -- Cascading update and delete when a car record is updated or deleted
     UNIQUE(car_plate_fk), --one car to one student 
     UNIQUE(student_id) --one studentid to one student 
 );
