@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "ballot": "node ballotingAlg.js",
+    "ballot": "node src/ballot/ballotingAlg.js",
     "dev": "nodemon server.js"
   },
   "keywords": [],

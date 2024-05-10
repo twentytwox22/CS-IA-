@@ -1,5 +1,6 @@
 const { pool } = require("../../dbConfig");
 const queries = require('../student/queries');  // Import SQL queries from queries.js
+
 // Function to add a student ID
 async function addStudentID (req, res) {  
     const studentId = req.user.student_id;

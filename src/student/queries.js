@@ -72,6 +72,9 @@ const UPDATE_CAR = `
         colour = COALESCE($4, colour)
     WHERE car_plate = $5;
 `;
+const COUNT_ALL_BALLOT_ENTRIES = 
+    `SELECT COUNT(*) 
+    FROM ballot_entries`;
 
 
 
@@ -94,4 +97,5 @@ module.exports={
     CHECK_STUDENT_IN_BALLOT,
     UPDATE_STUDENT_IN_BALLOT,
     ADD_STUDENT_TO_BALLOT,
+    COUNT_ALL_BALLOT_ENTRIES, 
 };

@@ -11,7 +11,10 @@ fix dashboard UI
     have a place to show me all the student details 
     maybe remove add car button if there is a car already added vice versa
     add ballot status ("already joined", "havent joined")
+    add ballot outcome 
     add next ballot status ("next ballot in xx:xx:xx") 
+
+sending the email!!!! + pdf? whats our verification method 
 
 Questions:
 should i seperate the balloting code into different files since its a different process?
