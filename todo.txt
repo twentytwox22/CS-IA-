@@ -1,16 +1,21 @@
-car functions
-    
-    check is car id in ballot system is the same 
-
 add ballot functionalities
-    add ballot status ("already joined", "havent joined")
-    add next ballot status ("next ballot in xx:xx:xx")
+    during ballot 
+        those who win should have a havePermit column set to true 
+    after ballot is run 
+        clear ballot table 
+        set inBallot value back to false 
+            UPDATE students
+            SET inBallot = false; 
 
 fix dashboard UI
     have a place to show me all the student details 
-    maybe remove add car button if there is a car already added vice versa 
+    maybe remove add car button if there is a car already added vice versa
+    add ballot status ("already joined", "havent joined")
+    add next ballot status ("next ballot in xx:xx:xx") 
 
 Questions:
+should i seperate the balloting code into different files since its a different process?
+    if so how much of it should i seperate? (error handling stays in controller.js or ballot)
 
 In process:
 
@@ -23,3 +28,4 @@ Fixed bug where form isnt pre filled when error occurs (5/5/24)
 fixed up add car functionality (9/5/24)
 added change car details functionality (10/5/24)
 delete car functionalities (10/5/24)
+added "enter ballot" function tgt with error handling (10/5/24)

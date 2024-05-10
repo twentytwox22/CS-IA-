@@ -7,6 +7,16 @@ const SELECT_CAR_BY_PLATE = `
     FROM cars 
     WHERE car_plate = $1`;
 
+const SELECT_NON_NULL_CAR_BY_STUDENT_ID = 
+    'SELECT car_plate_fk FROM students WHERE student_id = $1 AND  car_plate_fk IS NOT NULL';
+
+    const SELECT_CAR_BY_STUDENT_ID_AND_PLATE = `
+    SELECT * 
+    FROM cars 
+    WHERE car_plate = $1 
+    AND car_plate = (SELECT car_plate_fk FROM students WHERE student_id = $2)
+`; 
+
 const INSERT_NEW_STUDENT = `
     INSERT INTO students (student_name, student_id, student_year, student_house, password)
     VALUES ($1, $2, $3, $4, $5)
@@ -26,23 +36,34 @@ const CHECK_CAR_PLATE_AND_STUDENT_ASSIGNMENT = `
     SELECT 'car_assigned' AS reason FROM students WHERE student_id = $2 AND car_plate_fk IS NOT NULL`;
 
 
+// Check if the student is already in the ballot
+const CHECK_STUDENT_IN_BALLOT = 
+    `SELECT *
+    FROM ballot_entries 
+    WHERE student_id_fk = $1`;
+
+// Update the inBallotcolum in students table
+const UPDATE_STUDENT_IN_BALLOT = 
+    `UPDATE students 
+    SET inBallot = $1 
+    WHERE student_id = $2`;
+
+// Add student to ballot
+const ADD_STUDENT_TO_BALLOT = `
+    INSERT INTO ballot_entries (student_id_fk) 
+    VALUES ($1)`;
 
 
-//dump
+
 const SELECT_CAR_BY_STUDENT_ID = `
     SELECT car_plate_fk 
     FROM students 
     WHERE student_id = $1 
-`; //what is this??
+`; 
 
 
 
-const SELECT_CAR_BY_STUDENT_ID_AND_PLATE = `
-    SELECT * 
-    FROM cars 
-    WHERE car_plate = $1 
-    AND car_plate = (SELECT car_plate_fk FROM students WHERE student_id = $2)
-`; //what does this do actually
+
 const UPDATE_CAR = `
     UPDATE cars
     SET car_plate = COALESCE($1, car_plate),
@@ -61,6 +82,7 @@ module.exports={
     SELECT_CAR_BY_PLATE, 
     SELECT_CAR_BY_STUDENT_ID_AND_PLATE,
     SELECT_CAR_BY_STUDENT_ID, 
+    SELECT_NON_NULL_CAR_BY_STUDENT_ID,
 
     INSERT_NEW_STUDENT,
     INSERT_NEW_CAR,
@@ -68,4 +90,8 @@ module.exports={
     UPDATE_STUDENT_CAR_FK,
     UPDATE_CAR,
     CHECK_CAR_PLATE_AND_STUDENT_ASSIGNMENT, 
+
+    CHECK_STUDENT_IN_BALLOT,
+    UPDATE_STUDENT_IN_BALLOT,
+    ADD_STUDENT_TO_BALLOT,
 };

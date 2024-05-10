@@ -2,7 +2,7 @@
 const bcrypt = require("bcrypt");  // Used for hashing passwords
 const passport = require("passport");  // Used for handling authentication
 const { pool } = require("../../dbConfig");  // Database pool for PostgreSQL
-const { addStudentID } = require('../ballot/studentBallotManager');  // Function to add student ID to the ballot
+//const studentBallotManager= require('../ballot/studentBallotManager');  // Function to add student ID to the ballot
 const queries = require('./queries');  // Import SQL queries from queries.js
 
 // Function to log out the user
@@ -151,7 +151,6 @@ async function addCar(req, res) {
     }
 }  
 
-
 // Function to change car details
 async function updateCarDetails(req, res) {
     const { new_car_plate, new_make, new_model, new_colour } = req.body;
@@ -204,7 +203,7 @@ async function updateCarDetails(req, res) {
         res.redirect('/students/dashboard');
     }
 }
-
+// Function to delete car 
 async function deleteCar(req, res) {
     try {
         await pool.query('BEGIN');
@@ -223,6 +222,8 @@ async function deleteCar(req, res) {
         res.redirect('/students/dashboard');
     }
 }
+
+
 
 
 

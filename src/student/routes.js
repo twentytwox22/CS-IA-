@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('./controller');
+
+const studentBallotManager = require('../ballot/studentBallotManager');
 const passport = require("passport");
 const initializePassport = require("../../passportConfig");
 
@@ -43,7 +45,7 @@ router.post("/login", controller.loginUser); // Handles user login
 router.post('/add-car', ensureAuthenticated, controller.addCar); // Adds a car, requires authentication
 router.post('/change-car-details', ensureAuthenticated, controller.updateCarDetails); // Changes car details, requires authentication
 router.post('/delete-car', ensureAuthenticated, controller.deleteCar); // Deletes a car, requires authentication
-// router.post('/enter-ballot', checkAuthenticated, controller.enterBallot); // Enter a ballot, requires authentication
+router.post('/enter-ballot', ensureAuthenticated, studentBallotManager.addStudentID); // Enter a ballot, requires authentication
 
 //Authenticaton functions
 function checkAuthenticated(req, res, next) {
