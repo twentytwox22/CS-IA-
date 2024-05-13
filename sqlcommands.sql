@@ -11,19 +11,16 @@ CREATE TABLE students(
     student_year INT NOT NULL, --stores Student year eg 11 as a number, must be entered
     student_house VARCHAR(20) NOT NULL, --stores Student house eg Hay as a number, must be entered
     password VARCHAR(200) NOT NULL, --stores Student password eg i<3elonmusk as a string, must be entered
-    inBallot BOOLEAN DEFAULT FALSE, --stores boolean value eg TRUE, set to false by default
+    hasPermit BOOLEAN DEFAULT FALSE, --stores boolean value eg TRUE, set to false by default
      car_plate_fk VARCHAR(30),
      FOREIGN KEY (car_plate_fk) REFERENCES cars(car_plate) ON UPDATE CASCADE ON DELETE SET NULL, -- Cascading update and delete when a car record is updated or deleted
     UNIQUE(car_plate_fk), --one car to one student 
     UNIQUE(student_id) --one studentid to one student 
 );
 
-
 CREATE TABLE ballot_entries (
     student_id_fk INT PRIMARY KEY,
     entered_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_id_fk) REFERENCES students(student_id) ON DELETE NO ACTION 
+    FOREIGN KEY (student_id_fk) REFERENCES students(student_id) ON DELETE NO ACTION, 
+    UNIQUE (student_id_fk)
 );
-
-
-

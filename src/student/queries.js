@@ -42,11 +42,6 @@ const CHECK_STUDENT_IN_BALLOT =
     FROM ballot_entries 
     WHERE student_id_fk = $1`;
 
-// Update the inBallotcolum in students table
-const UPDATE_STUDENT_IN_BALLOT = 
-    `UPDATE students 
-    SET inBallot = $1 
-    WHERE student_id = $2`;
 
 // Add student to ballot
 const ADD_STUDENT_TO_BALLOT = `
@@ -77,6 +72,8 @@ const COUNT_ALL_BALLOT_ENTRIES =
     FROM ballot_entries`;
 
 
+const SELECT_ALL_STUDENT_IDS_FROM_BALLOT_ENTRIES = 
+'SELECT student_id_fk FROM ballot_entries';
 
 
 
@@ -95,7 +92,7 @@ module.exports={
     CHECK_CAR_PLATE_AND_STUDENT_ASSIGNMENT, 
 
     CHECK_STUDENT_IN_BALLOT,
-    UPDATE_STUDENT_IN_BALLOT,
     ADD_STUDENT_TO_BALLOT,
     COUNT_ALL_BALLOT_ENTRIES, 
+    SELECT_ALL_STUDENT_IDS_FROM_BALLOT_ENTRIES,
 };

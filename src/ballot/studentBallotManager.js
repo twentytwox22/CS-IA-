@@ -2,7 +2,7 @@ const { pool } = require("../../dbConfig");
 const queries = require('../student/queries');  // Import SQL queries from queries.js
 
 // Function to add a student ID
-async function addStudentID (req, res) {  
+async function addStudentID (req, res) {
     const studentId = req.user.student_id;
     try {
         await pool.query('BEGIN');  // Start transaction
@@ -25,11 +25,7 @@ async function addStudentID (req, res) {
         
         }
 
-        
-
-        // Update the inBallotcolum in students table
-        await pool.query(queries.UPDATE_STUDENT_IN_BALLOT, [true, studentId]);
-
+    
         // Add student to ballot
         await pool.query(queries.ADD_STUDENT_TO_BALLOT, [studentId]);
         await pool.query('COMMIT');  // Commit transaction

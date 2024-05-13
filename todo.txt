@@ -16,12 +16,6 @@ fix dashboard UI
 
 sending the email!!!! + pdf? whats our verification method 
 
-Questions:
-should i seperate the balloting code into different files since its a different process?
-    if so how much of it should i seperate? (error handling stays in controller.js or ballot)
-
-In process:
-
 DONE: 
 add error handling for letting users add more than one car (3/5/24)
 added additional error handling for "enterballot" function: check if the student has an existing car before allowing them to enter (4/5/24)
@@ -33,3 +27,5 @@ added change car details functionality (10/5/24)
 delete car functionalities (10/5/24)
 added "enter ballot" function tgt with error handling (10/5/24)
 add "run ballot" function (10/5/24)
+added a landing page (14/5/24)
+altered balloting algorithm to implement Fisher-Yates Shuffle (13/5/24)

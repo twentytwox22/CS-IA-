@@ -5,9 +5,9 @@ const queries = require('../student/queries');  // Import SQL queries from queri
 const numberOfSpots = 3; // Total parking spots available -- set by school 24? 
 
 async function fetchStudentIDs() {
-    const query = 'SELECT student_id_fk FROM ballot_entries';  
+      
     try {
-        const result = await pool.query(query);
+        const result = await pool.query(queries.SELECT_ALL_STUDENT_IDS_FROM_BALLOT_ENTRIES);
         return result.rows.map(row => row.student_id_fk);
     } catch (error) {
         console.error('Error fetching student IDs:', error);
@@ -15,26 +15,26 @@ async function fetchStudentIDs() {
     }
 }
 
-async function allocateParkingSpots(numberOfSpots) {
-    let winners = new Set();
-
-    // Fetch all student IDs eligible for the ballot
-    const studentIDs = await fetchStudentIDs();
-
-    // Ensure the number of spots does not exceed the number of students
-    numberOfSpots = Math.min(numberOfSpots, studentIDs.length);
-    
-    while (winners.size < numberOfSpots) {
-        let randomIndex = Math.floor(Math.random() * studentIDs.length);
-        winners.add(studentIDs[randomIndex]);
+// Fisher-Yates shuffle function
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // Swap elements
     }
-    
-    return Array.from(winners);
 }
 
-// This can be called via a route or a scheduled task
+async function allocateParkingSpots(numberOfSpots) {
+    let studentIDs = await fetchStudentIDs();
+    // Shuffle the array of student IDs
+    shuffleArray(studentIDs);
+    // Ensure the number of spots does not exceed the number of students
+    numberOfSpots = Math.min(numberOfSpots, studentIDs.length);
+    // Select the first 'numberOfSpots' students after shuffling
+    return studentIDs.slice(0, numberOfSpots);
+}
+
+// Called via npm run ballot
 async function performAllocation() {
-    const numberOfSpots = 3; // Define how many spots are available
     try {
         const allocatedSpots = await allocateParkingSpots(numberOfSpots);
         console.log("Allocated Spots:", allocatedSpots);
@@ -45,7 +45,5 @@ async function performAllocation() {
 }
 
 console.log(performAllocation());
-
-
 
 module.exports = { performAllocation };

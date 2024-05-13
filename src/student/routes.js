@@ -15,7 +15,7 @@ initializePassport(passport);
     // Route for the home page
     router.get('/', (req, res) => {
         res.render('index');
-    }); 
+    });
 
     // Route for the registration page 
     router.get('/register', checkAuthenticated, (req, res) => {
