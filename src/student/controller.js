@@ -43,7 +43,7 @@ function loginUser(req, res, next){
 
 // Function to register user
 async function registerUser (req, res) {
-    let { student_name,student_ID, student_year, student_house, password, password2 } = req.body;
+    let { student_name,student_ID, student_house, password, password2 } = req.body;
     let errors = [];
 
 
@@ -64,7 +64,7 @@ async function registerUser (req, res) {
     
     // If there are any errors, render the register page with error messages
     if (errors.length > 0) {
-        res.render("register", { errors, student_name, student_ID, student_year, student_house}); 
+        res.render("register", { errors, student_name, student_ID, student_house}); 
         // This pre-fills the form fields with error messages
         return;
       } else { // If everything is filled out properly
@@ -80,12 +80,12 @@ async function registerUser (req, res) {
            
             if(results.rows.length > 0){ // If student ID already exists
                     errors.push({message:'Student ID already in use'})
-                    res.render('register', { errors, student_name, student_ID, student_year, student_house});
+                    res.render('register', { errors, student_name, student_ID, student_house});
                 } else { // If new student ID
                     // Insert new student into the database
                     pool.query(
                         queries.INSERT_NEW_STUDENT, 
-                        [student_name,student_ID, student_year, student_house, hashedPassword], (err,results)=>{
+                        [student_name,student_ID, student_house, hashedPassword], (err,results)=>{
                             if (err) throw err
                             console.log("inserted new student: " + student_name + " " + student_ID); // Log inserted new student
                             req.flash('success_msg',"You are now registered. Please log in");
@@ -99,7 +99,6 @@ async function registerUser (req, res) {
     console.log("Registering user:", { 
         student_name,
         student_ID,
-        student_year,
         student_house,
         password,
         password2 

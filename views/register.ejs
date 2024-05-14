@@ -4,7 +4,7 @@
         // Default value setup
         student_name = typeof student_name !== 'undefined' ? student_name : '';
         student_ID = typeof student_ID !== 'undefined' ? student_ID : '';
-        student_year = typeof student_year !== 'undefined' ? student_year : '';
+       
         student_house = typeof student_house !== 'undefined' ? student_house : '';
         errors = typeof errors !== 'undefined' ? errors : [];
     %>
@@ -36,13 +36,7 @@
             value="<%= student_ID %>"
             required/>
         </div>
-        <div>
-            <select id="student_year" name="student_year" required>
-                 <option value="" disabled <%= typeof student_year === 'undefined' || student_year === '' ? 'selected' : '' %>>Select year</option>
-                <option value="11" <%= student_year === "11" ? 'selected' : '' %>>11</option>
-                <option value="12" <%= student_year === "12" ? 'selected' : '' %>>12</option>
-            </select>
-        </div>
+      
         <div>
             <input 
             type="text" 
