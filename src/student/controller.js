@@ -2,7 +2,6 @@
 const bcrypt = require("bcrypt");  // Used for hashing passwords
 const passport = require("passport");  // Used for handling authentication
 const { pool } = require("../../dbConfig");  // Database pool for PostgreSQL
-//const studentBallotManager= require('../ballot/studentBallotManager');  // Function to add student ID to the ballot
 const queries = require('./queries');  // Import SQL queries from queries.js
 
 // Function to log out the user
@@ -18,7 +17,6 @@ function logoutUser(req, res) {
             res.redirect('/students/login'); // Redirect to login page
         });
 }
-
 // Function to handle user login
 function loginUser(req, res, next){
     const { student_ID } = req.body;
@@ -40,7 +38,6 @@ function loginUser(req, res, next){
         console.log(`User ${student_ID} logged in`);
     }
 };
-
 // Function to register user
 async function registerUser (req, res) {
     let { student_name,student_ID, student_house, password, password2 } = req.body;
@@ -69,12 +66,10 @@ async function registerUser (req, res) {
         return;
       } else { // If everything is filled out properly
         //hash the password
-        hashedPassword = await bcrypt.hash(password, 10); 
-        console.log("hashed pw is: " + hashedPassword + " from controller.js");
-    
+        
         pool.query( 
              //check if a student with the given student_ID already exists in the database.
-            queries.SELECT_STUDENT_BY_ID, [student_ID], (err, results) => { 
+            queries.SELECT_STUDENT_BY_ID, [student_ID], async (err, results) => { 
                 if (err) console.error("Error executing SQL query:", err);
             console.log("existing students: " + results.rows); // Log existing students
            
@@ -83,6 +78,9 @@ async function registerUser (req, res) {
                     res.render('register', { errors, student_name, student_ID, student_house});
                 } else { // If new student ID
                     // Insert new student into the database
+                    hashedPassword = await bcrypt.hash(password, 10); 
+                    console.log("hashed pw is: " + hashedPassword + " from controller.js");
+    
                     pool.query(
                         queries.INSERT_NEW_STUDENT, 
                         [student_name,student_ID, student_house, hashedPassword], (err,results)=>{
@@ -115,11 +113,11 @@ async function addCar(req, res) {
 
 
     try {
-        // Check for existing car or car assigned to the student in a single query
+        //Check if student already has a car or if the car has already been assigned to another student
+
         const carCheckResult = await pool.query(queries.CHECK_CAR_PLATE_AND_STUDENT_ASSIGNMENT, 
             [car_plate, req.user.student_id]);
 
-        // Handle errors based on query results
         // Handle errors based on query results
         if (carCheckResult.rows.length > 0) {
             // Determine the specific error message based on the reason returned
@@ -149,7 +147,6 @@ async function addCar(req, res) {
         res.redirect("/students/dashboard");
     }
 }  
-
 // Function to change car details
 async function updateCarDetails(req, res) {
     const { new_car_plate, new_make, new_model, new_colour } = req.body;
@@ -207,6 +204,14 @@ async function deleteCar(req, res) {
     try {
         await pool.query('BEGIN');
 
+        // check if there is a current car_plate associated with the user
+        const currentCarResult = await pool.query(queries.SELECT_CAR_BY_STUDENT_ID, [req.user.student_id]);
+        console.log(currentCarResult.rows);
+        if (currentCarResult.rows.length === 0 || currentCarResult.rows[0].car_plate_fk === null) {
+            req.flash('error_msg', 'You have not added a car. Delete not possible.');
+            await pool.query('ROLLBACK');  // Roll back any potential changes made
+            return res.redirect('/students/dashboard'); 
+        }
         // Delete the car from the cars table
         await pool.query(`DELETE FROM cars WHERE car_plate = $1;`, [req.user.car_plate_fk]);
 
