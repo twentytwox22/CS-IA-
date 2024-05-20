@@ -110,13 +110,19 @@ async function getDashboard (req,res){
 
     try { //code for balloting status
         const result = await pool.query(queries.SELECT_BALLOT_STATUS_BY_STUDENT_ID, [student_id]); 
+        console.log(result.rows) //[ { inballot: true } ]
+        const { inballot } = result.rows[0];  // Ensure correct casing
+        console.log('inballot:', inballot);
 
-        let ballotStatus = 'No ballot entry';
 
-        if (result == true) { //if user is in the ballot
+        if (inballot == true) { //if user is in the ballot
+
             const studentPermit = await pool.query(queries.SELECT_PERMIT_STATUS_BY_STUDENT_ID, [student_id]);
+            console.log(studentPermit.rows)
+            const { haspermit } = studentPermit.rows[0];
+            console.log('haspermit:', haspermit);
 
-            if (studentPermit == true) { //if student has permit
+            if (haspermit == true) { //if student has permit
                     ballotStatus = 'Accepted';
             } else { //student is in ballot but doesnt have permit
                 ballotStatus = 'Not accepted';
