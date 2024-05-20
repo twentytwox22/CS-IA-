@@ -103,6 +103,36 @@ async function registerUser (req, res) {
       }, " in controller.js");
     }
 }
+async function getDashboard (req,res){
+    
+    const student_id = req.user.student_id;
+    const student_name = req.user.student_name;
+
+    try { //code for balloting status
+        const result = await pool.query(queries.SELECT_BALLOT_STATUS_BY_STUDENT_ID, [student_id]); 
+
+        let ballotStatus = 'No ballot entry';
+
+        if (result == true) { //if user is in the ballot
+            const studentPermit = await pool.query(queries.SELECT_PERMIT_STATUS_BY_STUDENT_ID, [student_id]);
+
+            if (studentPermit == true) { //if student has permit
+                    ballotStatus = 'Accepted';
+            } else { //student is in ballot but doesnt have permit
+                ballotStatus = 'Not accepted';
+            }
+
+        } else { //user not in the ballot and doesnt have permit 
+            ballotStatus = 'No ballot entry';
+        }
+        res.render('dashboard', { title: 'Dashboard', student_name, ballotStatus });
+    }    
+    catch (error) {
+        console.error('Error fetching ballot status:', error);
+        res.status(500).send("Error fetching ballot status");
+    }
+}
+
 
 // Function to add car 
 async function addCar(req, res) {
@@ -234,6 +264,7 @@ async function deleteCar(req, res) {
 module.exports = {
     logoutUser,
     registerUser,
+    getDashboard,
     loginUser,
     addCar,
     updateCarDetails,

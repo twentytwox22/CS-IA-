@@ -48,16 +48,11 @@ const ADD_STUDENT_TO_BALLOT = `
     INSERT INTO ballot_entries (student_id_fk) 
     VALUES ($1)`;
 
-
-
 const SELECT_CAR_BY_STUDENT_ID = `
     SELECT car_plate_fk 
     FROM students 
     WHERE student_id = $1 
 `; 
-
-
-
 
 const UPDATE_CAR = `
     UPDATE cars
@@ -76,6 +71,24 @@ const SELECT_ALL_STUDENT_IDS_FROM_BALLOT_ENTRIES =
 'SELECT student_id_fk FROM ballot_entries';
 
 
+const UPDATE_HAS_PERMIT_FALSE_FOR_ALL = `
+    UPDATE students
+    SET hasPermit = false`;
+
+const UPDATE_HAS_PERMIT_TRUE_FOR_STUDENT = `
+    UPDATE students
+    SET hasPermit = true
+    WHERE student_id = $1`;
+
+const SELECT_PERMIT_STATUS_BY_STUDENT_ID = `
+    SELECT hasPermit 
+    FROM students
+    WHERE student_id = $1`;
+
+const SELECT_BALLOT_STATUS_BY_STUDENT_ID = `
+    SELECT inBallot
+    FROM students 
+    WHERE student_id = $1`;
 
 module.exports={
     SELECT_STUDENT_BY_ID,
@@ -95,4 +108,9 @@ module.exports={
     ADD_STUDENT_TO_BALLOT,
     COUNT_ALL_BALLOT_ENTRIES, 
     SELECT_ALL_STUDENT_IDS_FROM_BALLOT_ENTRIES,
+    UPDATE_HAS_PERMIT_FALSE_FOR_ALL, 
+    UPDATE_HAS_PERMIT_TRUE_FOR_STUDENT, 
+    SELECT_PERMIT_STATUS_BY_STUDENT_ID, 
+    SELECT_BALLOT_STATUS_BY_STUDENT_ID, 
+    
 };

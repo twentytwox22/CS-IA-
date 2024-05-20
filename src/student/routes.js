@@ -25,11 +25,8 @@ router.get('/login', checkAuthenticated, (req, res) => {
                 res.render("login");
 });
 // Route for the dashboard - accessible only if authenticated
-router.get('/dashboard', checkNotAuthenticated, (req,res)=>{
-    const student_name = req.user.student_name;
-    //res.render("dashboard", { student_name});
-    res.render('dashboard', { title: 'Dashboard', student_name});
-});
+router.get('/dashboard', checkNotAuthenticated, controller.getDashboard);
+
 
 // Authentication Routes
 router.get('/logout', controller.logoutUser); // Handles user logout

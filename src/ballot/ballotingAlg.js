@@ -36,9 +36,22 @@ async function allocateParkingSpots(numberOfSpots) {
 // Called via npm run ballot
 async function performAllocation() {
     try {
+        //hasPermit status to false 
+        queries.UPDATE_HAS_PERMIT_FALSE_FOR_ALL; 
+
         const allocatedSpots = await allocateParkingSpots(numberOfSpots);
+
+        //set hasPermit = true for successfull students 
+        for (const studentID of allocatedSpots) {
+            await pool.query(queries.UPDATE_HAS_PERMIT_TRUE_FOR_STUDENT, [studentID]);
+        }
+
         console.log("Allocated Spots:", allocatedSpots);
-        // Additional logic here (e.g., update database, notify winners)
+
+        
+        // delete all students from the ballot table
+
+
     } catch (error) {
         console.error('Failed to allocate parking spots:', error);
     }
