@@ -1,12 +1,11 @@
 const express = require("express");
 const expressLayouts = require('express-ejs-layouts');
 const { pool } = require("./dbConfig");
-const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
 require("dotenv").config();
-const studentRoutes = require('./src/student/routes') //change
+const studentRoutes = require('./src/student/routes');
 const app = express();
 const PORT = process.env.PORT || 4000;
 const initializePassport = require("./passportConfig");

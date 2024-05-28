@@ -16,6 +16,9 @@ fix dashboard UI
 
 sending the email!!!! + pdf? whats our verification method 
 
+error hadnling : 
+in all fields dis allow certain symbols can be done on front end regex
+
 DONE: 
 add error handling for letting users add more than one car (3/5/24)
 added additional error handling for "enterballot" function: check if the student has an existing car before allowing them to enter (4/5/24)

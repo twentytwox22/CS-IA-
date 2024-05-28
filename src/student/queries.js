@@ -10,7 +10,7 @@ const SELECT_CAR_BY_PLATE = `
 const SELECT_NON_NULL_CAR_BY_STUDENT_ID = 
     'SELECT car_plate_fk FROM students WHERE student_id = $1 AND  car_plate_fk IS NOT NULL';
 
-    const SELECT_CAR_BY_STUDENT_ID_AND_PLATE = `
+const SELECT_CAR_BY_STUDENT_ID_AND_PLATE = `
     SELECT * 
     FROM cars 
     WHERE car_plate = $1 

@@ -62,16 +62,15 @@ async function registerUser (req, res) {
     // If there are any errors, render the register page with error messages
     if (errors.length > 0) {
         res.render("register", { errors, student_name, student_ID, student_house}); 
-        // This pre-fills the form fields with error messages
+        
         return;
-      } else { // If everything is filled out properly
+      } else { 
         //hash the password
         
         pool.query( 
-             //check if a student with the given student_ID already exists in the database.
             queries.SELECT_STUDENT_BY_ID, [student_ID], async (err, results) => { 
                 if (err) console.error("Error executing SQL query:", err);
-            console.log("existing students: " + results.rows); // Log existing students
+            console.log("existing students: " + results.rows); 
            
             if(results.rows.length > 0){ // If student ID already exists
                     errors.push({message:'Student ID already in use'})
@@ -138,7 +137,6 @@ async function getDashboard (req,res){
         res.status(500).send("Error fetching ballot status");
     }
 }
-
 
 // Function to add car 
 async function addCar(req, res) {

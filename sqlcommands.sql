@@ -1,4 +1,3 @@
--- Create the 'cars' table
 CREATE TABLE cars (
     car_plate VARCHAR(30) PRIMARY KEY, -- Stores Car Plate (e.g., ACT123), up to 30 characters, must be unique
     make VARCHAR(30) NOT NULL,         -- Stores Car make (e.g., Tesla), up to 30 characters, must be entered
@@ -6,7 +5,6 @@ CREATE TABLE cars (
     model VARCHAR(50) NOT NULL         -- Stores Car model (e.g., Model X), up to 50 characters, must be entered
 );
 
--- Create the 'students' table
 CREATE TABLE students (
     student_id INT PRIMARY KEY NOT NULL,           -- Stores Student ID (e.g., 280671), must be entered
     student_name VARCHAR(200) NOT NULL,            -- Stores Student name (e.g., Elon Musk), must be entered

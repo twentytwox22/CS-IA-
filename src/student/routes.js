@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('./controller');
-
 const studentBallotManager = require('../ballot/studentBallotManager');
 const passport = require("passport");
 const initializePassport = require("../../passportConfig");
@@ -18,11 +17,11 @@ router.get('/', (req, res) => {
 });
 // Route for the registration page 
 router.get('/register', checkAuthenticated, (req, res) => {
-    res.render("register");
+  res.render("register");
 });
 // Route for the login page 
 router.get('/login', checkAuthenticated, (req, res) => {
-                res.render("login");
+  res.render("login");
 });
 // Route for the dashboard - accessible only if authenticated
 router.get('/dashboard', checkNotAuthenticated, controller.getDashboard);
