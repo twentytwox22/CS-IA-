@@ -1,11 +1,11 @@
 const { pool } = require("../../dbConfig");
 const queries = require('../student/queries');  // Import SQL queries from queries.js
+const { sendEmail, successfulHtmlBody, successfulTextBody, unsuccessfulHtmlBody, unsuccessfulTextBody } = require('../email/email');
 
 
 const numberOfSpots = 3; // Total parking spots available -- set by school 24? 
 
 async function fetchStudentIDs() {
-      
     try {
         const result = await pool.query(queries.SELECT_ALL_STUDENT_IDS_FROM_BALLOT_ENTRIES);
         return result.rows.map(row => row.student_id_fk);
@@ -14,6 +14,8 @@ async function fetchStudentIDs() {
         throw error;
     }
 }
+
+
 
 // Fisher-Yates shuffle function
 function shuffleArray(array) {
@@ -37,19 +39,30 @@ async function allocateParkingSpots(numberOfSpots) {
 async function performAllocation() {
     try {
         //hasPermit status to false 
-        queries.UPDATE_HAS_PERMIT_FALSE_FOR_ALL; 
+        await pool.query(queries.UPDATE_HAS_PERMIT_FALSE_FOR_ALL);
+
 
         const allocatedSpots = await allocateParkingSpots(numberOfSpots);
+        console.log("Allocated Spots:", allocatedSpots);
 
         //set hasPermit = true for successfull students 
         for (const studentID of allocatedSpots) {
             await pool.query(queries.UPDATE_HAS_PERMIT_TRUE_FOR_STUDENT, [studentID]);
-        }
 
-        console.log("Allocated Spots:", allocatedSpots);
+            console.log("student id:", studentID)
+            const student_name = await pool.query(queries.SELECT_STUDENT_NAME_BY_ID, [studentID]);
+            const htmlBody = successfulHtmlBody.replace('[Student Name]', student_name );
+            const textBody = successfulTextBody.replace('[Student Name]', student_name );
+            sendEmail(htmlBody, textBody);
+        } 
+        
 
         
-        // delete all students from the ballot table
+
+        
+        // Delete all students from the ballot table and set inBallot to false
+        //await pool.query(queries.DELETE_ALL_BALLOT_ENTRIES);
+        //await pool.query(queries.UPDATE_IN_BALLOT_FALSE_FOR_ALL);
 
 
     } catch (error) {
@@ -58,5 +71,7 @@ async function performAllocation() {
 }
 
 console.log(performAllocation());
+
+
 
 module.exports = { performAllocation };

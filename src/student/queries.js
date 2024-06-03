@@ -2,6 +2,12 @@ const SELECT_STUDENT_BY_ID = `
     SELECT * 
     FROM students 
     WHERE student_id = $1`;
+
+const SELECT_STUDENT_NAME_BY_ID = `
+    SELECT student_name 
+    FROM students 
+    WHERE student_id = $1`;
+
 const SELECT_CAR_BY_PLATE = `
     SELECT * 
     FROM cars 
@@ -112,5 +118,6 @@ module.exports={
     UPDATE_HAS_PERMIT_TRUE_FOR_STUDENT, 
     SELECT_PERMIT_STATUS_BY_STUDENT_ID, 
     SELECT_BALLOT_STATUS_BY_STUDENT_ID, 
+    SELECT_STUDENT_NAME_BY_ID,
     
 };
