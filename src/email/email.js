@@ -53,12 +53,12 @@ const unsuccessfulHtmlBody = `
 </html>
 `;
 
-
-async function sendEmail(htmlBody, textBody) {
+99
+async function sendEmail(to, htmlBody, textBody) {
   try {
     const response = await client.sendEmail({
       "From": "parking@studentproj.cgscomputing.com",
-      "To": "testuser-parking@studentproj.cgscomputing.com",
+      "To": to,
       "Subject": "Year 12 Carpark Balloting Results",
       "HtmlBody": htmlBody,
       "TextBody": textBody,

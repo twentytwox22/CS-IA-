@@ -28,6 +28,7 @@ async function addStudentID (req, res) {
     
         // Add student to ballot
         await pool.query(queries.ADD_STUDENT_TO_BALLOT, [studentId]);
+        await pool.query(queries.UPDATE_IN_BALLOT_TRUE_FOR_STUDENT, [studentId]);
         await pool.query('COMMIT');  // Commit transaction
         console.log('Student successfully entered into the ballot'); // Log or handle successful entry
         req.flash('success_msg', 'You have successfully entered the ballot for a parking spot');

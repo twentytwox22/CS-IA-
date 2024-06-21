@@ -3,11 +3,12 @@ const SELECT_STUDENT_BY_ID = `
     FROM students 
     WHERE student_id = $1`;
 
-const SELECT_STUDENT_NAME_BY_ID = `
-    SELECT student_name 
-    FROM students 
-    WHERE student_id = $1`;
+const SELECT_STUDENT_DETAILS_BY_IDS = `
+SELECT student_id, student_name 
+FROM students 
+WHERE student_id = ANY($1::int[])`;
 
+ 
 const SELECT_CAR_BY_PLATE = `
     SELECT * 
     FROM cars 
@@ -24,8 +25,8 @@ const SELECT_CAR_BY_STUDENT_ID_AND_PLATE = `
 `; 
 
 const INSERT_NEW_STUDENT = `
-    INSERT INTO students (student_name, student_id, student_year, student_house, password)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO students (student_name, student_id, student_house, password)
+    VALUES ($1, $2, $3, $4)
     RETURNING student_id, password;`; 
 const INSERT_NEW_CAR = `
     INSERT INTO cars (car_plate, make, model, colour) 
@@ -96,6 +97,18 @@ const SELECT_BALLOT_STATUS_BY_STUDENT_ID = `
     FROM students 
     WHERE student_id = $1`;
 
+const DELETE_ALL_BALLOT_ENTRIES = `
+    DELETE FROM ballot_entries`;
+
+const UPDATE_IN_BALLOT_FALSE_FOR_ALL = `
+    UPDATE students 
+    SET inBallot = FALSE;`
+
+const UPDATE_IN_BALLOT_TRUE_FOR_STUDENT =`
+    UPDATE students
+    SET inBallot = TRUE
+    WHERE student_id = $1
+`
 module.exports={
     SELECT_STUDENT_BY_ID,
     SELECT_CAR_BY_PLATE, 
@@ -116,8 +129,12 @@ module.exports={
     SELECT_ALL_STUDENT_IDS_FROM_BALLOT_ENTRIES,
     UPDATE_HAS_PERMIT_FALSE_FOR_ALL, 
     UPDATE_HAS_PERMIT_TRUE_FOR_STUDENT, 
+    UPDATE_IN_BALLOT_TRUE_FOR_STUDENT,
     SELECT_PERMIT_STATUS_BY_STUDENT_ID, 
     SELECT_BALLOT_STATUS_BY_STUDENT_ID, 
-    SELECT_STUDENT_NAME_BY_ID,
+    SELECT_STUDENT_DETAILS_BY_IDS,
+
+    DELETE_ALL_BALLOT_ENTRIES, 
+    UPDATE_IN_BALLOT_FALSE_FOR_ALL,
     
 };

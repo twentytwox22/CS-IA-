@@ -3,7 +3,23 @@ const queries = require('../student/queries');  // Import SQL queries from queri
 const { sendEmail, successfulHtmlBody, successfulTextBody, unsuccessfulHtmlBody, unsuccessfulTextBody } = require('../email/email');
 
 
-const numberOfSpots = 3; // Total parking spots available -- set by school 24? 
+
+const numberOfSpots = 3; // Total parking spots available -- set by school
+
+async function fetchStudentDetails(studentIDs) {
+    try {
+        const result = await pool.query(queries.SELECT_STUDENT_DETAILS_BY_IDS, [studentIDs]);
+        return result.rows.map(row => ({
+            id: row.student_id,
+            name: row.student_name
+        }));
+    } catch (error) {
+        console.error('Error fetching student details:', error);
+        throw error;
+    }
+}
+
+
 
 async function fetchStudentIDs() {
     try {
@@ -15,7 +31,9 @@ async function fetchStudentIDs() {
     }
 }
 
-
+function generateStudentEmail(studentID) {
+    return `${studentID}@cgs.act.edu.au`;
+}
 
 // Fisher-Yates shuffle function
 function shuffleArray(array) {
@@ -35,43 +53,49 @@ async function allocateParkingSpots(numberOfSpots) {
     return studentIDs.slice(0, numberOfSpots);
 }
 
-// Called via npm run ballot
 async function performAllocation() {
     try {
-        //hasPermit status to false 
         await pool.query(queries.UPDATE_HAS_PERMIT_FALSE_FOR_ALL);
-
 
         const allocatedSpots = await allocateParkingSpots(numberOfSpots);
         console.log("Allocated Spots:", allocatedSpots);
 
-        //set hasPermit = true for successfull students 
         for (const studentID of allocatedSpots) {
             await pool.query(queries.UPDATE_HAS_PERMIT_TRUE_FOR_STUDENT, [studentID]);
+            console.log("student id:", studentID);
+        }
 
-            console.log("student id:", studentID)
-            const student_name = await pool.query(queries.SELECT_STUDENT_NAME_BY_ID, [studentID]);
-            const htmlBody = successfulHtmlBody.replace('[Student Name]', student_name );
-            const textBody = successfulTextBody.replace('[Student Name]', student_name );
-            sendEmail(htmlBody, textBody);
-        } 
-        
+        const allStudentIDs = await fetchStudentIDs();
+        const allStudents = await fetchStudentDetails(allStudentIDs);
 
-        
+        const unsuccessfulStudents = allStudents.filter(student => !allocatedSpots.includes(student.id));
 
-        
-        // Delete all students from the ballot table and set inBallot to false
-        //await pool.query(queries.DELETE_ALL_BALLOT_ENTRIES);
-        //await pool.query(queries.UPDATE_IN_BALLOT_FALSE_FOR_ALL);
+        for (const studentID of allocatedSpots) {
+            const student = allStudents.find(s => s.id === studentID);
+            const studentEmail = generateStudentEmail(studentID);
+            console.log("Sending email to successful student:", studentEmail, student.name);
+            const htmlBody = successfulHtmlBody.replace('[Student Name]', student.name);
+            const textBody = successfulTextBody.replace('[Student Name]', student.name);
+            await sendEmail(studentEmail, htmlBody, textBody);
+            //await sendEmail(studentEmail, successfulHtmlBody, successfulTextBody);
+        }
 
+        for (const student of unsuccessfulStudents) {
+            const studentEmail = generateStudentEmail(student.id);
+            console.log("Sending email to unsuccessful student:", studentEmail, student.name);
+            const htmlBody = unsuccessfulHtmlBody.replace('[Student Name]', student.name);
+            const textBody = unsuccessfulTextBody.replace('[Student Name]', student.name);
+            await sendEmail(studentEmail, htmlBody, textBody);
+        }
+
+        await pool.query(queries.DELETE_ALL_BALLOT_ENTRIES);
+        await pool.query(queries.UPDATE_IN_BALLOT_FALSE_FOR_ALL);
 
     } catch (error) {
         console.error('Failed to allocate parking spots:', error);
     }
 }
 
-console.log(performAllocation());
-
-
+performAllocation();
 
 module.exports = { performAllocation };
