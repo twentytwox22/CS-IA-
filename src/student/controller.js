@@ -43,8 +43,6 @@ async function registerUser (req, res) {
     let { student_name,student_ID, student_house, password, password2 } = req.body;
     let errors = [];
 
-
-
     //error handling
     if (!student_name || !student_ID || !password || !password2) {
         errors.push({ message: "Please enter all fields" });

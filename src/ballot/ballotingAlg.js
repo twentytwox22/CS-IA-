@@ -77,7 +77,6 @@ async function performAllocation() {
             const htmlBody = successfulHtmlBody.replace('[Student Name]', student.name);
             const textBody = successfulTextBody.replace('[Student Name]', student.name);
             await sendEmail(studentEmail, htmlBody, textBody);
-            //await sendEmail(studentEmail, successfulHtmlBody, successfulTextBody);
         }
 
         for (const student of unsuccessfulStudents) {

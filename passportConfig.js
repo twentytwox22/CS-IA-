@@ -51,17 +51,17 @@ function initialize(passport) {
     )
   );
 
-passport.serializeUser((student, done) => done(null, student.student_id));
+  passport.serializeUser((student, done) => done(null, student.student_id));
 
 // In deserializeUser that key is matched with the in memory array / database or any data resource.
 // The fetched object is attached to the request object as req.user
-passport.deserializeUser((student_ID, done) => {
-  pool.query(`SELECT * FROM students WHERE student_ID = $1`, [student_ID], (err, results) => {
-    if (err) {
-      return done(err);
+  passport.deserializeUser((student_ID, done) => {
+    pool.query(`SELECT * FROM students WHERE student_ID = $1`, [student_ID], (err, results) => {
+      if (err) {
+        return done(err);
       }
-    console.log(`ID is ${student_ID}`);
-    return done(null, results.rows[0]);
+      console.log(`ID is ${student_ID}`);
+      return done(null, results.rows[0]);
     });
   });
 }

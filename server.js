@@ -1,12 +1,15 @@
+//express routing
 const express = require("express");
+const studentRoutes = require('./src/student/routes');
+const app = express();
+
 const expressLayouts = require('express-ejs-layouts');
 const { pool } = require("./dbConfig");
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
 require("dotenv").config();
-const studentRoutes = require('./src/student/routes');
-const app = express();
+
 const PORT = process.env.PORT || 4000;
 const initializePassport = require("./passportConfig");
 initializePassport(passport);
@@ -34,6 +37,7 @@ app.use(express.static('public'));
 app.use(flash());
 
 app.use('/students',studentRoutes);
+
 
 app.get('/', (req,res)=> {
     res.send("hello world");                
